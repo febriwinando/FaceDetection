@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.FaceRecognition" parent="Theme.Material3.DayNight.NoActionBar">
+    </style>
+
+    <style name="Theme.FaceRecognition" parent="Base.Theme.FaceRecognition" />
+
+    <style name="Base.Theme.AppPemko" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/biru</item>
+        <item name="colorSecondary">@color/biru</item>
+
+    </style>
+    <style name="Theme.AppPemko" parent="Base.Theme.AppPemko">
+
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorSecondary">@color/biru</item>
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/font_highlight</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button</item>
+    </style>
+</resources>
