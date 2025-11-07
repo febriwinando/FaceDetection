@@ -123,13 +123,14 @@ public class SakitActivity extends AppCompatActivity {
             kegiatansSakitLainnya = "kosong";
         }
 
-        if (!kegiatanCheckedSakit.isEmpty() && !etkegiatanSakitLainnya.getText().toString().isEmpty()){
+        if (kegiatanCheckedSakit.isEmpty() && kegiatansSakitLainnya.equals("kosong")){
+            dialogView.viewNotifKosong(SakitActivity.this, "Anda Harus Mengisi Kegiatan Yang Dilaksanakan.", "");
+
+
+        }else {
             Intent intentTL = new Intent(SakitActivity.this, DetectorActivity.class);
             intentTL.putExtra("title", "Isi Data Kondisi Kesehatan");
             startActivity(intentTL);
-        }else {
-            dialogView.viewNotifKosong(SakitActivity.this, "Anda Harus Mengisi Kegiatan Yang Dilaksanakan.", "");
-
         }
     }
 

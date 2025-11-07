@@ -12,7 +12,6 @@ import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.loca
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,14 +24,11 @@ import android.graphics.Canvas;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -48,13 +44,10 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentContainerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -72,20 +65,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.radiobutton.MaterialRadioButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
-import go.pemkott.appsandroidmobiletebingtinggi.DeteksiWajah.CameraActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.NewDashboard.DashboardVersiOne;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
 import go.pemkott.appsandroidmobiletebingtinggi.api.ResponsePOJO;
@@ -108,7 +97,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
     double latGMap = 0, lngGMap = 0;
     Lokasi lokasi = new Lokasi();
     DialogView dialogView = new DialogView(AbsensiKehadiranActivity.this);
-    private String currentPhotoPath;
     private String sEmployId;
     private String rbTanggal;
     private String rbJam;
@@ -124,7 +112,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
     String jamTaging, jamMasuk, jamPulang, hariIni, eKelompok, eJabatan, timetableid;
     String tanggal;
     String diff, latOffice, lngOffice,eOPD;
-    String jam_masuk, jam_pulang;
 
     Calendar cal = Calendar.getInstance();
 
@@ -137,16 +124,11 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
     static ArrayList<String> latListExc = new ArrayList<>();
     static ArrayList<String> lngListExc = new ArrayList<>();
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     double totalJarak;
     Date jamMasukDate, jamPulangDate, tagingTime;
     int mins;
     int minspulang;
 
-    //Buttom Sheet
-//    CardView upsheet;
-//    private BottomSheetBehavior sheetBehavior;
-    //Buttom Sheet
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
 
@@ -155,6 +137,8 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
     private final boolean mockLocationsEnabled = false;
     int mock_location = 0;
     File file;
+
+    boolean statuskehadiran;
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,12 +173,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         mContext = this;
         setupViews();
         setupViewModel();
-
-        //Google Maps
-        jam_masuk = DashboardVersiOne.jam_masuk;
-        jam_pulang = DashboardVersiOne.jam_pulang;
-
-
 
 
         rbTanggal = SIMPLE_FORMAT_TANGGAL.format(new Date());
@@ -237,6 +215,20 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         });
 
         startLocationUpdates();
+
+        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployId,rbTanggal);
+
+        if (checkPresence){
+            statuskehadiran = true;
+            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployId+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
+
+        }else{
+            statuskehadiran = false;
+            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployId+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
+
+        }
+
+
     }
 
     private void setRoundedBackground(FragmentContainerView view) {
@@ -552,7 +544,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         return R * c;
     }
 
-    Bitmap viewFotoBitmap;
     String encodedImage = null;
     AmbilFoto ambilFoto = new AmbilFoto(AbsensiKehadiranActivity.this);
     public void uploadImages(){
@@ -594,7 +585,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                         String rbValid;
                         if (radioSelectedKehadiran.getText().toString().equals("Masuk")){
 
-                            if (jam_masuk != null){
+                            if (statuskehadiran){
                                 dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Anda sudah mengisi absensi masuk.", "");
                             }else{
 
@@ -617,7 +608,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                                         rbStatus = "hadir";
                                         eselon = "2";
                                     }
-//                                    viewBerakhlak();
+
 //                                Upload Absensi masuk
                                     kirimdata(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, mins, jamMasuk, rbValid, "100");
 
@@ -630,7 +621,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
                             rbPosisi = "pulang";
                             rbStatus = "hadir";
-                            ketKehadiran = "pulang";
 
                             if (tagingTime.getTime() > jamPulangDate.getTime()) {
                                 rbKet = "sesuai waktu";
@@ -639,7 +629,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                                 rbKet = "kecepatan";
                             }
 
-                            if (jam_pulang == null){
+                            if (statuskehadiran){
 
                                 if (tagingTime.getTime() < jamPulangDate.getTime()){
                                     dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda ya.");
@@ -659,7 +649,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                                     }
                                     rbValid = "2";
 
-                                    if (jam_masuk == null ){
+                                    if (!statuskehadiran){
                                         viewBerakhlak("masukpulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid);
                                     }
                                     else{
@@ -675,9 +665,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                 }
             }
         }
-
-
-
     }
 
     public void kirimdata(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status, String lat, String lng, String ket, int terlambat, String jampegawai, String validasi, String berakhlak){
@@ -707,7 +694,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                 batasWaktu,
                 berakhlak
         );
-
         call.enqueue(new Callback<ResponsePOJO>() {
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
@@ -718,9 +704,32 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                     return;
                 }
 
-                if(response.body().isStatus()){
-                    dialogproses.dismiss();
-                    viewSukses(AbsensiKehadiranActivity.this);
+                if(Objects.requireNonNull(response.body()).isStatus()){
+                    if (statuskehadiran){
+                        if (Objects.equals(absensi, "pulang")) {
+                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(idpegawai, tanggal, jam, posisi, status, lat, lng, ket);
+                            if (inserted) {
+                                dialogproses.dismiss();
+                                viewSukses(AbsensiKehadiranActivity.this);
+                            }
+                        }
+                    } else {
+                        if (Objects.equals(absensi, "masuk")){
+                            boolean inserted = databaseHelper.insertPresence(idpegawai, tanggal, jam, posisi,status,lat,lng,ket);
+                            if (inserted) {
+                                dialogproses.dismiss();
+                                viewSukses(AbsensiKehadiranActivity.this);
+                            }
+                        } else if (Objects.equals(absensi, "masukpulang")) {
+                            boolean inserted = databaseHelper.insertPresencePulang(idpegawai, tanggal, jam, posisi,status,lat,lng,ket);
+                            if (inserted) {
+                                dialogproses.dismiss();
+                                viewSukses(AbsensiKehadiranActivity.this);
+                            }
+                        }
+                    }
+
+
                 }else{
                     dialogproses.dismiss();
                     dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, response.body().getRemarks(), "");
@@ -730,6 +739,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
             @Override
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                Log.e("ABSENSI_API_ERROR", "Gagal memanggil API absensi: " + t.getMessage(), t);
                 dialogproses.dismiss();
 
                 dialogView.pesanError(AbsensiKehadiranActivity.this);

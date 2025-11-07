@@ -1,8 +1,6 @@
 package go.pemkott.appsandroidmobiletebingtinggi.izin.cuti;
 
-import static android.content.ContentValues.TAG;
 import static go.pemkott.appsandroidmobiletebingtinggi.geolocation.model.LocationHelper.defaultLocation;
-import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.SIMPLE_DATE_FORMAT_TAGING;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.SIMPLE_DATE_FORMAT_TAGING_PHOTO_REPORT;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.SIMPLE_FORMAT_JAM;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.SIMPLE_FORMAT_JAM_MASUK_PULANG;
@@ -59,13 +57,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -107,7 +101,6 @@ import go.pemkott.appsandroidmobiletebingtinggi.api.RetroClient;
 import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.dinasluarkantor.perjalanandinas.PerjalananDinasFinalActivity;
-import go.pemkott.appsandroidmobiletebingtinggi.dinasluarkantor.tugaslapangan.TugasLapanganFinalActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.kameralampiran.CameraLampiranActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFotoLampiran;
@@ -127,7 +120,6 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
     private LocationViewModel locationViewModel;
     private Location locationObj;
     private GoogleMap map;
-    private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     double latGMap = 0, lngGMap = 0;
     double latitudeSaya = 3.327972364475644;
@@ -864,12 +856,12 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
         Date today = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(today);
-        c.add( Calendar.MONTH, 3);
+        c.add( Calendar.MONTH, 0);
         long maxDate = c.getTime().getTime();
 
         Calendar d = Calendar.getInstance();
         d.setTime(today);
-        d.add( Calendar.MONTH, -3);
+        d.add( Calendar.MONTH, -1);
         long minDate = d.getTime().getTime();
 
         datePickerDialogMulai = new DatePickerDialog(this, style, dateSetListener, tahun, bulan, hari);
@@ -905,12 +897,12 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
         Date today = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(today);
-        c.add( Calendar.MONTH, 3);
+        c.add( Calendar.MONTH, 1);
         long maxDate = c.getTime().getTime();
 
         Calendar d = Calendar.getInstance();
         d.setTime(today);
-        d.add( Calendar.MONTH, -4);
+        d.add( Calendar.MONTH, 0);
         long minDate = d.getTime().getTime();
         datePickerDialogSampai = new DatePickerDialog(this, style, dateSetListener, tahun, bulan, hari);
         datePickerDialogSampai.getDatePicker().setMaxDate(maxDate);

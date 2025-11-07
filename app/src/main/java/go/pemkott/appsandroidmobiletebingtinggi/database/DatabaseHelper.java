@@ -35,11 +35,20 @@ import java.text.ParseException;
 import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+
+    // =========================
+    // DATABASE CONFIGURATION
+    // =========================
     public static final String NAMA_DATABASE = "absensitt.db";
+    private static final int DATABASE_VERSION = 100;
 
     public DatabaseHelper(Context context) {
-        super(context, NAMA_DATABASE, null, 8);
+        super(context, NAMA_DATABASE, null, DATABASE_VERSION);
     }
+
+    // =========================
+    // TABLE: DATA PENGGUNA
+    // =========================
     public static final String TABLE_USER = "data_pengguna";
     public static final String COL_1 = "ID";
     public static final String COL_2 = "EMPLOYEID";
@@ -49,7 +58,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_6 = "TOKEN";
     public static final String COL_7 = "VERIFIKATOR";
 
-//Table temporary
+    // =========================
+    // TABLE: TEMPORARY_PD
+    // =========================
     public static final String TEMPORARY_PD = "temporary_pd";
     public static final String T_ID = "ID";
     public static final String T_KEGIATAN = "KEGIATAN";
@@ -58,13 +69,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String T_LAT = "LAT";
     public static final String T_LNG = "LNG";
 
-//    Table Resoirce
-    public static final String RESOURCE_KEGIATAN ="kegiatan_izin";
+    // =========================
+    // TABLE: RESOURCE KEGIATAN
+    // =========================
+    public static final String RESOURCE_KEGIATAN = "kegiatan_izin";
     public static final String R_ID = "ID";
     public static final String R_TIPE = "TIPE";
     public static final String R_KET = "KET";
 
-//    Time Table
+    // =========================
+    // TABLE: TIMETABLE
+    // =========================
     public static final String TIMETABLE = "timetables";
     public static final String TT_ID = "ID";
     public static final String TT_EMPLOYEE_ID = "EMPLOYEEID";
@@ -74,21 +89,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TT_MASUK = "MASUK";
     public static final String TT_PULANG = "PULANG";
 
-
+    // =========================
+    // TABLE: JAMSIFT
+    // =========================
     public static final String JAMSIFT = "jamsift";
-    public static String JS_ID = "ID",
-            JS_OPD_ID = "OPD_ID",
-            JS_TIPE = "TIPE",
-            JS_INISIAL ="INISIAL",
-            JS_MASUK = "MASUK",
-            JS_PULANG = "PULANG";
+    public static final String JS_ID = "ID";
+    public static final String JS_OPD_ID = "OPD_ID";
+    public static final String JS_TIPE = "TIPE";
+    public static final String JS_INISIAL = "INISIAL";
+    public static final String JS_MASUK = "MASUK";
+    public static final String JS_PULANG = "PULANG";
 
+    // =========================
+    // TABLE: JADWALSIFT
+    // =========================
     public static final String JADWALSIFT = "jadwalsift";
-    public static String JW_ID = "ID",
-            JW_EMPLOYEE_ID ="EMPLOYEEID",
-            JW_SIFT = "SIFT_ID",
-            JW_TANGGAL = "TANGGAL";
+    public static final String JW_ID = "ID";
+    public static final String JW_EMPLOYEE_ID = "EMPLOYEEID";
+    public static final String JW_SIFT = "SIFT_ID";
+    public static final String JW_TANGGAL = "TANGGAL";
 
+    // =========================
+    // TABLE: PRESENCES
+    // =========================
     public static final String PRESENCES = "presences";
     public static final String P_ID = "ID";
     public static final String P_EMPLOYEE_ID = "EMPLOYEEID";
@@ -99,21 +122,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String P_POSISI_PULANG = "POSISI_PULANG";
     public static final String P_STATUS_MASUK = "STATUS_MASUK";
     public static final String P_STATUS_PULANG = "STATUS_PULANG";
-    public static final String P_PHOTO_TAGING_MASUK = "PHOTOTAGING_MASUK";
-    public static final String P_PHOTO_TAGING_PULANG = "PHOTOTAGING_PULANG";
     public static final String P_LAT_MASUK = "LAT_MASUK";
     public static final String P_LAT_PULANG = "LAT_PULANG";
     public static final String P_LNG_MASUK = "LNG_MASUK";
     public static final String P_LNG_PULANG = "LNG_PULANG";
     public static final String P_KET_MASUK = "KET_MASUK";
     public static final String P_KET_PULANG = "KET_PULANG";
-    public static final String P_LAMPIRAN_MASUK = "LAMPIRAN_MASUK";
-    public static final String P_LAMPIRAN_PULANG = "LAMPIRAN_PULANG";
     public static final String P_VALID_MASUK = "VALID_MASUK";
     public static final String P_VALID_PULANG = "VALID_PULANG";
-    public static final String P_LAMPIRAN_KOSONG_MASUK = "KOSONG_MASUK";
-    public static final String P_LAMPIRAN_KOSONG_PULANG = "KOSONG_PULANG";
 
+    // =========================
+    // TABLE: KOORDINAT
+    // =========================
     public static final String KOORDINAT = "koordinat";
     public static final String K_ID = "ID";
     public static final String K_OPD_ID = "OPDID";
@@ -121,6 +141,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String K_LAT = "LAT";
     public static final String K_LNG = "LNG";
 
+    // =========================
+    // TABLE: KOORDINAT EMPLOYEE
+    // =========================
     public static final String KOORDINAT_E = "koordinatemployee";
     public static final String KE_ID = "ID";
     public static final String KE_EMP_ID = "EMPLOYEID";
@@ -128,76 +151,165 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KE_LAT = "LAT";
     public static final String KE_LNG = "LNG";
 
+    // =========================
+    // TABLE: INFO MASUK PULANG
+    // =========================
     public static final String INFO_MP = "masukpulang";
     public static final String INFO_EMPLOYEE_ID = "ID";
     public static final String INFO_TANGGAL = "TANGGAL";
     public static final String INFO_JAM = "JAM";
     public static final String INFO_STATUS = "STATUS";
 
+    // =========================
+    // TABLE: INFO LOGIN USER
+    // =========================
     public static final String HAPUS_DATA_PENGGUNA = "infologinuser";
     public static final String HAPUS_ID = "ID";
     public static final String HAPUS_INFO = "KODE";
 
+    // =========================
+    // TABLE: EMPLOYEE (TIDAK ADA DI KONSTANTA AWAL)
+    // =========================
+    public static final String EMPLOYEE = "employee";
 
     @Override
-    public void onCreate(SQLiteDatabase absensi) {
-
+    public void onCreate(SQLiteDatabase db) {
         try {
-            absensi.execSQL("create table " + TABLE_USER + " (ID TEXT, EMPLOYEID TEXT, " +
-                    "USERNAME TEXT, MARKS TEXT, ACTIVE TEXT, TOKEN TEXT, VERIFIKATOR TEXT ) ");
+            // =========================
+            // TABLE: DATA PENGGUNA
+            // =========================
+            db.execSQL("CREATE TABLE " + TABLE_USER + " (" +
+                    COL_1 + " TEXT, " +
+                    COL_2 + " TEXT, " +
+                    COL_3 + " TEXT, " +
+                    COL_4 + " TEXT, " +
+                    COL_5 + " TEXT, " +
+                    COL_6 + " TEXT, " +
+                    COL_7 + " TEXT)");
 
-            absensi.execSQL("create table " + KOORDINAT_E + " (ID TEXT, EMPLOYEID TEXT, " +
-                    "ALAMAT TEXT, LAT TEXT, LNG TEXT ) ");
+            // =========================
+            // TABLE: KOORDINAT EMPLOYEE
+            // =========================
+            db.execSQL("CREATE TABLE " + KOORDINAT_E + " (" +
+                    KE_ID + " TEXT, " +
+                    KE_EMP_ID + " TEXT, " +
+                    KE_ALAMAT + " TEXT, " +
+                    KE_LAT + " TEXT, " +
+                    KE_LNG + " TEXT)");
 
-            absensi.execSQL("create table " + KOORDINAT + " (ID TEXT, OPDID TEXT, " +
-                    "ALAMAT TEXT, LAT TEXT, LNG TEXT ) ");
+            // =========================
+            // TABLE: KOORDINAT
+            // =========================
+            db.execSQL("CREATE TABLE " + KOORDINAT + " (" +
+                    K_ID + " TEXT, " +
+                    K_OPD_ID + " TEXT, " +
+                    K_ALAMAT + " TEXT, " +
+                    K_LAT + " TEXT, " +
+                    K_LNG + " TEXT)");
 
-            absensi.execSQL("create table " + HAPUS_DATA_PENGGUNA + " (ID TEXT, KODE TEXT ) ");
+            // =========================
+            // TABLE: INFO LOGIN USER
+            // =========================
+            db.execSQL("CREATE TABLE " + HAPUS_DATA_PENGGUNA + " (" +
+                    HAPUS_ID + " TEXT, " +
+                    HAPUS_INFO + " TEXT)");
 
-            absensi.execSQL("create table " + INFO_MP + " (ID TEXT, TANGGAL TEXT, " +
-                    "JAM TEXT, STATUS TEXT ) ");
+            // =========================
+            // TABLE: INFO MASUK PULANG
+            // =========================
+            db.execSQL("CREATE TABLE " + INFO_MP + " (" +
+                    INFO_EMPLOYEE_ID + " TEXT, " +
+                    INFO_TANGGAL + " TEXT, " +
+                    INFO_JAM + " TEXT, " +
+                    INFO_STATUS + " TEXT)");
 
-            absensi.execSQL("create table " + TEMPORARY_PD + " (ID TEXT, KEGIATAN TEXT, " +
-                    "TGLMULAI TEXT, TGLSAMPAI TEXT, LAT TEXT, LNG TEXT ) ");
+            // =========================
+            // TABLE: TEMPORARY PD
+            // =========================
+            db.execSQL("CREATE TABLE " + TEMPORARY_PD + " (" +
+                    T_ID + " TEXT, " +
+                    T_KEGIATAN + " TEXT, " +
+                    T_TGLMULAI + " TEXT, " +
+                    T_TGLSAMPAI + " TEXT, " +
+                    T_LAT + " TEXT, " +
+                    T_LNG + " TEXT)");
 
-            absensi.execSQL("create table " + RESOURCE_KEGIATAN + " (ID TEXT, TIPE TEXT, KET TEXT)");
+            // =========================
+            // TABLE: RESOURCE KEGIATAN
+            // =========================
+            db.execSQL("CREATE TABLE " + RESOURCE_KEGIATAN + " (" +
+                    R_ID + " TEXT, " +
+                    R_TIPE + " TEXT, " +
+                    R_KET + " TEXT)");
 
-            absensi.execSQL("create table " + TIMETABLE + " (ID TEXT, EMPLOYEEID TEXT, " +
-                    "TIMETABELID TEXT, INISIAL TEXT, HARI TEXT, MASUK TEXT, PULANG TEXT ) ");
+            // =========================
+            // TABLE: TIMETABLE
+            // =========================
+            db.execSQL("CREATE TABLE " + TIMETABLE + " (" +
+                    TT_ID + " TEXT, " +
+                    TT_EMPLOYEE_ID + " TEXT, " +
+                    TT_TIMETABLE_ID + " TEXT, " +
+                    TT_INISIAL + " TEXT, " +
+                    TT_HARI + " TEXT, " +
+                    TT_MASUK + " TEXT, " +
+                    TT_PULANG + " TEXT)");
 
-            absensi.execSQL("create table " + JAMSIFT + " (ID TEXT, OPD_ID TEXT, " +
-                    "TIPE TEXT, INISIAL TEXT, MASUK TEXT, PULANG TEXT ) ");
+            // =========================
+            // TABLE: JAMSIFT
+            // =========================
+            db.execSQL("CREATE TABLE " + JAMSIFT + " (" +
+                    JS_ID + " TEXT, " +
+                    JS_OPD_ID + " TEXT, " +
+                    JS_TIPE + " TEXT, " +
+                    JS_INISIAL + " TEXT, " +
+                    JS_MASUK + " TEXT, " +
+                    JS_PULANG + " TEXT)");
 
-            absensi.execSQL("create table " + JADWALSIFT + " (ID TEXT, EMPLOYEEID TEXT, " +
-                    "SIFT_ID TEXT, TANGGAL TEXT ) ");
+            // =========================
+            // TABLE: JADWALSIFT
+            // =========================
+            db.execSQL("CREATE TABLE " + JADWALSIFT + " (" +
+                    JW_ID + " TEXT, " +
+                    JW_EMPLOYEE_ID + " TEXT, " +
+                    JW_SIFT + " TEXT, " +
+                    JW_TANGGAL + " TEXT)");
 
-            absensi.execSQL("create table " + PRESENCES + " (ID TEXT, EMPLOYEEID TEXT, TANGGAL TEXT, " +
-                    "JAM_MASUK TEXT,  JAM_PULANG TEXT, " +
-                    "POSISI_MASUK TEXT, POSISI_PULANG TEXT, " +
-                    "STATUS_MASUK TEXT, STATUS_PULANG TEXT, " +
-                    "PHOTOTAGING_MASUK BLOB, PHOTOTAGING_PULANG BLOB," +
-                    "LAT_MASUK TEXT, LAT_PULANG TEXT, " +
-                    "LNG_MASUK TEXT, LNG_PULANG TEXT, " +
-                    "KET_MASUK TEXT, KET_PULANG TEXT, " +
-                    "LAMPIRAN_MASUK BLOB, LAMPIRAN_PULANG BLOB, " +
-                    "VALID_MASUK TEXT, VALID_PULANG TEXT, " +
-                    "KOSONG_MASUK TEXT, KOSONG_PULANG TEXT ) ");
+            // =========================
+            // TABLE: PRESENCES
+            // =========================
+            db.execSQL("CREATE TABLE " + PRESENCES + " (" +
+                    P_ID + " TEXT, " +
+                    P_EMPLOYEE_ID + " TEXT, " +
+                    P_TANGGAL + " TEXT, " +
+                    P_JAM_MASUK + " TEXT, " +
+                    P_JAM_PULANG + " TEXT, " +
+                    P_POSISI_MASUK + " TEXT, " +
+                    P_POSISI_PULANG + " TEXT, " +
+                    P_STATUS_MASUK + " TEXT, " +
+                    P_STATUS_PULANG + " TEXT, " +
+                    P_LAT_MASUK + " TEXT, " +
+                    P_LAT_PULANG + " TEXT, " +
+                    P_LNG_MASUK + " TEXT, " +
+                    P_LNG_PULANG + " TEXT, " +
+                    P_KET_MASUK + " TEXT, " +
+                    P_KET_PULANG + " TEXT, " +
+                    P_VALID_MASUK + " TEXT, " +
+                    P_VALID_PULANG + " TEXT)");
 
-            absensi.execSQL("create table " + EMPLOYEE +" (ID TEXT, IDI TEXT, IDII TEXT, " +
+            // =========================
+            // TABLE: EMPLOYEE
+            // =========================
+            db.execSQL("CREATE TABLE " + EMPLOYEE + " (" +
+                    "ID TEXT, IDI TEXT, IDII TEXT, " +
                     "POSISIID TEXT, OPDID TEXT, " +
-                    "NIP TEXT, NAMA TEXT, " +
-                    "EMAIL TEXT, NOHP TEXT, " +
-                    "KELOMPOK TEXT, SJABATAN TEXT, " +
-                    "ESELON TEXT, JABATAN TEXT, " +
-                    "NAMA_OPD TEXT, ALAMAT TEXT, " +
-                    "LAT TEXT, LNG TEXT, FOTO TEXT, " +
-                    "BATAS_WAKTU TEXT, PEGAWAI_SIFT TEXT ) ");
-        }catch (Exception e){
-            absensi.beginTransaction();
+                    "NIP TEXT, NAMA TEXT, EMAIL TEXT, NOHP TEXT, " +
+                    "KELOMPOK TEXT, SJABATAN TEXT, ESELON TEXT, JABATAN TEXT, " +
+                    "NAMA_OPD TEXT, ALAMAT TEXT, LAT TEXT, LNG TEXT, FOTO TEXT, " +
+                    "BATAS_WAKTU TEXT, PEGAWAI_SIFT TEXT)");
+
+        } catch (Exception e) {
+            db.beginTransaction();
         }
-
-
-
     }
 
 
@@ -223,66 +335,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             onCreate(absensi);
     }
 
-    public boolean insertDataPresences(String id, String employee_id, String tanggal, String jam, String posisi,String status,
-                                       byte[] phototaging, String lat, String lng, String ket, byte[] lampiran, String valid, String lampirankosong){
+    // =========================
+// INSERT DATA KE TABEL PRESENCES
+// =========================
+    public boolean insertPresence(
+            String employeeId,
+            String tanggal,
+            String jamMasuk,
+            String posisiMasuk,
+            String statusMasuk,
+            String latMasuk,
+            String lngMasuk,
+            String ketMasuk
+    ) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
+        ContentValues values = new ContentValues();
 
-        contentValues.put(P_ID, id);
-        contentValues.put(P_EMPLOYEE_ID, employee_id);
-        contentValues.put(P_TANGGAL, tanggal);
-        contentValues.put(P_JAM_MASUK, jam);
-        contentValues.put(P_POSISI_MASUK, posisi);
-        contentValues.put(P_STATUS_MASUK, status);
-        contentValues.put(P_PHOTO_TAGING_MASUK, phototaging);
-        contentValues.put(P_LAT_MASUK, lat);
-        contentValues.put(P_LNG_MASUK, lng);
-        contentValues.put(P_KET_MASUK, ket);
-        contentValues.put(P_LAMPIRAN_MASUK, lampiran);
-        contentValues.put(P_VALID_MASUK, valid);
-        contentValues.put(P_LAMPIRAN_KOSONG_MASUK, lampirankosong);
+        values.put(P_EMPLOYEE_ID, employeeId);
+        values.put(P_TANGGAL, tanggal);
+        values.put(P_JAM_MASUK, jamMasuk);
+        values.put(P_POSISI_MASUK, posisiMasuk);
+        values.put(P_STATUS_MASUK, statusMasuk);
+        values.put(P_LAT_MASUK, latMasuk);
+        values.put(P_LNG_MASUK, lngMasuk);
+        values.put(P_KET_MASUK, ketMasuk);
 
-        long result = db.insert(PRESENCES, null, contentValues);
-        if (result == -1 )
-            return false;
-        else
-            return true;
+        long result = db.insert(PRESENCES, null, values);
+        db.close();
+
+        // Jika insert berhasil, result != -1
+        return result != -1;
     }
 
-    public boolean updatePresensi(String id, String employee_id, String jam, String posisi, String status,
-                                  byte[] phototaging, String lat, String lng, String ket, byte[] lampiran, String valid, String lampirankosong){
-        SQLiteDatabase infoMP = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(P_JAM_PULANG, jam);
-        contentValues.put(P_POSISI_PULANG, posisi);
-        contentValues.put(P_STATUS_PULANG, status);
-        contentValues.put(P_PHOTO_TAGING_PULANG, phototaging);
-        contentValues.put(P_LAT_PULANG, lat);
-        contentValues.put(P_LNG_PULANG, lng);
-        contentValues.put(P_KET_PULANG, ket);
-        contentValues.put(P_LAMPIRAN_PULANG, lampiran);
-        contentValues.put(P_VALID_PULANG, valid);
-        contentValues.put(P_LAMPIRAN_KOSONG_PULANG, lampirankosong);
-
-        infoMP.update(PRESENCES, contentValues, P_ID+" = ? AND "+P_EMPLOYEE_ID+" = ? ", new String[]{id, employee_id});
-        return true;
-    }
-    public static void deleteDatabase(Context mContext) {
-        mContext.deleteDatabase(NAMA_DATABASE);
-        return;
-    }
-
-    public Cursor getSingkronPresensi(String id, String idE){
+    public boolean insertPresencePulang(
+            String employeeId,
+            String tanggal,
+            String jamPulang,
+            String posisiPulang,
+            String statusPulang,
+            String latPulang,
+            String lngPulang,
+            String ketPulang
+    ) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+EMPLOYEE+" where ID = '"+id+"'", null);
-        return res;
+        ContentValues values = new ContentValues();
+
+        values.put(P_EMPLOYEE_ID, employeeId);
+        values.put(P_TANGGAL, tanggal);
+        values.put(P_JAM_PULANG, jamPulang);
+        values.put(P_POSISI_PULANG, posisiPulang);
+        values.put(P_STATUS_PULANG, statusPulang);
+        values.put(P_LAT_PULANG, latPulang);
+        values.put(P_LNG_PULANG, lngPulang);
+        values.put(P_KET_PULANG, ketPulang);
+
+        long result = db.insert(PRESENCES, null, values);
+        db.close();
+
+        // Jika insert berhasil, result != -1
+        return result != -1;
     }
 
-    public Cursor getInfoDataTabelUser(String kode){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+HAPUS_DATA_PENGGUNA+" where KODE = '"+kode+"'", null);
-        return res;
-    }
 
     public boolean insertDataEmployee(String id, String atasan_id1, String atasan_id2, String position_id, String opd_id,
                                       String nip, String nama, String email, String no_hp, String kelompok, String s_jabatan,
@@ -320,9 +433,105 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getPresenceByEmployeeAndDate(String employeeId, String tanggal) {
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        String query = "SELECT * FROM " + PRESENCES + " WHERE " +
+                P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?";
 
+        return db.rawQuery(query, new String[]{employeeId, tanggal});
+    }
+    public boolean checkPresenceByDate(String employeeId, String tanggal) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM " + PRESENCES + " WHERE " +
+                        P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?",
+                new String[]{employeeId, tanggal}
+        );
 
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
+    }
+
+    public boolean updatePresenceByIdAndDate(
+            String id,
+            String tanggal,
+            String jamPulang,
+            String posisiPulang,
+            String statusPulang,
+            String latPulang,
+            String lngPulang,
+            String ketPulang
+    ) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(P_JAM_PULANG, jamPulang);
+        values.put(P_POSISI_PULANG, posisiPulang);
+        values.put(P_STATUS_PULANG, statusPulang);
+        values.put(P_LAT_PULANG, latPulang);
+        values.put(P_LNG_PULANG, lngPulang);
+        values.put(P_KET_PULANG, ketPulang);
+
+        int result = db.update(
+                PRESENCES,
+                values,
+                P_ID + " = ? AND " + P_TANGGAL + " = ?",
+                new String[]{id, tanggal}
+        );
+
+        db.close();
+        return result > 0; // return true jika update berhasil
+    }
+
+//    public boolean updatePresenceByIdAndDate(
+//            String id,
+//            String tanggal,
+//            String jamMasuk,
+//            String jamPulang,
+//            String posisiMasuk,
+//            String posisiPulang,
+//            String statusMasuk,
+//            String statusPulang,
+//            String latMasuk,
+//            String latPulang,
+//            String lngMasuk,
+//            String lngPulang,
+//            String ketMasuk,
+//            String ketPulang,
+//            String validMasuk,
+//            String validPulang
+//    ) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(P_JAM_MASUK, jamMasuk);
+//        values.put(P_JAM_PULANG, jamPulang);
+//        values.put(P_POSISI_MASUK, posisiMasuk);
+//        values.put(P_POSISI_PULANG, posisiPulang);
+//        values.put(P_STATUS_MASUK, statusMasuk);
+//        values.put(P_STATUS_PULANG, statusPulang);
+//        values.put(P_LAT_MASUK, latMasuk);
+//        values.put(P_LAT_PULANG, latPulang);
+//        values.put(P_LNG_MASUK, lngMasuk);
+//        values.put(P_LNG_PULANG, lngPulang);
+//        values.put(P_KET_MASUK, ketMasuk);
+//        values.put(P_KET_PULANG, ketPulang);
+//        values.put(P_VALID_MASUK, validMasuk);
+//        values.put(P_VALID_PULANG, validPulang);
+//
+//        int result = db.update(
+//                PRESENCES,
+//                values,
+//                P_ID + " = ? AND " + P_TANGGAL + " = ?",
+//                new String[]{id, tanggal}
+//        );
+//
+//        db.close();
+//        return result > 0; // return true jika update berhasil
+//    }
 
     public Cursor getDataEmployee(String id){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -379,53 +588,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else
             return true;
     }
-
-    public boolean insertDataKodeInfoTableUser(String kode){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(HAPUS_INFO, kode);
-        contentValues.put(HAPUS_ID, kode);
-
-        long result = db.insert(HAPUS_DATA_PENGGUNA, null, contentValues);
-        if (result == -1 )
-            return false;
-        else
-            return true;
-    }
-
-    public boolean insertInfoMP(String id, String tanggal, String jam, String status){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(INFO_EMPLOYEE_ID, id);
-        contentValues.put(INFO_TANGGAL, tanggal);
-        contentValues.put(INFO_JAM, jam);
-        contentValues.put(INFO_STATUS, status);
-
-        long result = db.insert(INFO_MP, null, contentValues);
-        if (result == -1 )
-            return false;
-        else
-            return true;
-    }
-
-
-    public Cursor getInfoMP(String idE, String status, String tanggal ){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+INFO_MP+" where "+INFO_EMPLOYEE_ID+" = '"+idE+"' AND "+INFO_TANGGAL+" = '"+ tanggal +"' AND "+INFO_STATUS+" = '"+ status +"'", null);
-        return res;
-    }
-
-
-    public boolean updateDataInfoMP(String id, String tanggal, String jam, String status){
-        SQLiteDatabase infoMP = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(INFO_JAM, jam);
-        contentValues.put(INFO_STATUS, status);
-
-        infoMP.update(INFO_MP, contentValues, INFO_EMPLOYEE_ID+" = ? AND "+INFO_TANGGAL+" = ? ", new String[]{id, tanggal, status});
-        return true;
-    }
-
 
 
     public boolean insertDataTimeTable(String id, String employee_id, String timetable_id, String inisial, String hari, String masuk, String pulang){
@@ -498,34 +660,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertDataTemporaryPD(String kegiatan, String tglMulai, String tglSampai, String lat, String lng){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(T_ID, "1");
-        contentValues.put(T_KEGIATAN, kegiatan);
-        contentValues.put(T_TGLMULAI, tglMulai);
-        contentValues.put(T_TGLSAMPAI, tglSampai);
-        contentValues.put(T_LAT, lat);
-        contentValues.put(T_LNG, lng);
-        long result = db.insert(TABLE_USER, null, contentValues);
-        if (result == -1 )
-            return false;
-        else
-            return true;
-    }
-
-    public boolean insertImageTemporary(String id_kegiatan, byte[] img){
-        SQLiteDatabase MyDB = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("ID_KEGIATAN", id_kegiatan);
-        contentValues.put("IMAGE", img);
-        long ins = MyDB.insert("temporary_image", null, contentValues);
-        if(ins==-1)
-            return false;
-        else
-            return true;
-    }
 
     public Cursor getAllData22(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -570,23 +704,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-//            absensi.execSQL("create table "+JADWALSIFT+" (ID TEXT, EMPLOYEEID TEXT, " +
-//            "SIFT_ID TEXT, TANGGAL TEXT)");
 
-    public Cursor getJadwalSift(String ide){
-        String today = SIMPLE_FORMAT_TANGGAL.format(new Date());
-        Date tglToday =null;
-        try {
-
-            tglToday = SIMPLE_FORMAT_TANGGAL.parse(today);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select ID, EMPLOYEEID, SIFT_ID, date(TANGGAL) from "+JADWALSIFT+" where EMPLOYEEID = '"+ide+"'" , null);
-        return res;
-    }
 
     public Cursor getJadwalSifts2(String ide, String bulansebelum, String bulan, String tahunsebelum, String tahun){
 
@@ -603,15 +721,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Cursor getInfoJadwalSift(String ide){
-        String bulan = BULAN.format(new Date());
-        String tahun = TAHUN.format(new Date());
-
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select ID, EMPLOYEEID, SIFT_ID, date(TANGGAL), strftime('%m', TANGGAL) AS BULAN, strftime('%Y', TANGGAL) AS TAHUN from "+JADWALSIFT+" where EMPLOYEEID = '"+ide+"' and BULAN = '"+bulan+"' and TAHUN = '"+tahun+"'" , null);
-        return res;
-    }
 
     public Cursor getInfoJadwalSiftToday(String ide, String tglCheck){
         String hariini = SIMPLE_FORMAT_TANGGAL.format(new Date());
@@ -628,91 +737,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public boolean updateTimeTabale(String tt_timetable_id, String inisial, String masuk, String pulang, String employee_id, String hari){
-        SQLiteDatabase dbUmkm = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(TT_TIMETABLE_ID, tt_timetable_id);
-        contentValues.put(TT_INISIAL, inisial);
-        contentValues.put(TT_MASUK, masuk);
-        contentValues.put(TT_PULANG, pulang);
-
-        dbUmkm.update(TIMETABLE, contentValues, TT_EMPLOYEE_ID+" = ? AND "+TT_HARI+" = ? ", new String[]{employee_id, hari});
-        return true;
-    }
-
-
-    public Cursor getListPresensi(String idE){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+PRESENCES+" where " +P_EMPLOYEE_ID+" = '"+idE+"' order by "+P_TANGGAL+" desc, "+P_JAM_MASUK+" desc", null);
-//        Cursor res = db.rawQuery("select * from "+PRESENCES+" order by "+P_TANGGAL+" desc, "+P_JAM+" desc", null);
-        return res;
-
-    }
-
-    public Cursor getListPresensiPosisi(String tanggalPresensi, String idE){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+PRESENCES+" where TANGGAL = '"+tanggalPresensi+"' AND "+P_EMPLOYEE_ID+" = '"+idE+"'", null);
-        return res;
-
-    }
-
-    public Cursor getListPresensiPosisi2(String tanggal){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+PRESENCES+" where "+P_EMPLOYEE_ID+" = '15' AND TANGGAL = '"+tanggal+"'", null);
-
-        return res;
-    }
-
-
-    public Cursor getAllDataTemporaryPD(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+TEMPORARY_PD, null);
-        return res;
-    }
-
-    public Cursor getToken(){
-        SQLiteDatabase db = DatabaseHelper.this.getWritableDatabase();
-        Cursor res = db.rawQuery("select "+COL_6+" from "+TABLE_USER, null);
-        return res;
-    }
-
-    public boolean updateData(String id, String name, String username, String marks){
-        SQLiteDatabase dbUmkm = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_1, id);
-        contentValues.put(COL_2, name);
-        contentValues.put(COL_3, username);
-        contentValues.put(COL_4, marks);
-
-        dbUmkm.update(TABLE_USER, contentValues, "ID = ?", new String[]{id});
-        return true;
-    }
-
-    public boolean updateDataTemporaryPDTime(String id, String tglmulai, String tglsampai){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(T_TGLMULAI, tglmulai);
-        contentValues.put(T_TGLSAMPAI, tglsampai);
-
-        db.update(TEMPORARY_PD, contentValues, "ID = ?", new String[]{id});
-        return true;
-
-    }
-
-    public boolean updateDataEmployee(String id, String imgProfil){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(E_FOTO, imgProfil);
-
-        db.update(EMPLOYEE, contentValues, "ID = ?", new String[]{id});
-        return true;
-
-    }
-
-    public Integer deleteData(String id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete( TABLE_USER, "EMPLOYEID = ?", new String[] {id} );
-    }
 
     public Integer deleteDataUseAll(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -729,12 +753,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.delete( JAMSIFT, null, null);
     }
     public Integer deleteJadwalSift(String ide, String bulan, String tahun){
-
-//        String bulan = BULAN.format(new Date());
-//        String tahun = TAHUN.format(new Date());
-//        Cursor res = db.rawQuery("select ID, EMPLOYEEID, SIFT_ID, date(TANGGAL), strftime('%m', TANGGAL) AS BULAN, strftime('%Y', TANGGAL) AS TAHUN from "+JADWALSIFT+" where EMPLOYEEID = '"+ide+"' and BULAN = '"+bulan+"' and TAHUN = '"+tahun+"'" , null);
-//        return res; JW_TANGGAL
-//        SQLiteDatabase db = this.getWritableDatabase();
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select ID, date(TANGGAL), strftime('%m', TANGGAL) AS BULAN, strftime('%Y', TANGGAL) AS TAHUN from "+JADWALSIFT+" where EMPLOYEEID = '"+ide+"' and BULAN = '"+bulan+"' and TAHUN = '"+tahun+"'", null);
@@ -764,21 +782,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.delete( HAPUS_DATA_PENGGUNA, HAPUS_INFO+" = ?", new String[] {id} );
     }
 
-    public Integer deleteDataEmployee(String id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete( EMPLOYEE, E_ID+" = ?", new String[] {id} );
-    }
 
     public Integer deleteDataEmployeeAll(){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete( EMPLOYEE, null, null );
     }
 
-    public Integer deleteDataTemporaryPD(String id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete( TEMPORARY_PD, "ID = ?", new String[] {id} );
-
-    }
 
     public Integer deleteDataKoordinatEmployee(String idE){
         SQLiteDatabase db = this.getWritableDatabase();

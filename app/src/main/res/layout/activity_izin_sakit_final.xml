@@ -161,16 +161,15 @@
                         android:layout_height="wrap_content"
                         android:text="Foto Absen"
                         android:layout_marginBottom="5dp"
-
                         android:textColor="@color/font"
                         />
+
                     <LinearLayout
                         android:layout_width="150dp"
                         android:layout_height="200dp"
                         android:orientation="vertical"
                         android:gravity="center_horizontal"
                         android:background="@drawable/backgroundnavbarputih"
-                        android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="addFotoKegiatan"
                         android:focusable="true">
@@ -178,11 +177,12 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/ivFinalKegiatanSakit"
                             android:layout_width="match_parent"
-                            android:layout_height="220dp"
+                            android:layout_height="match_parent"
                             android:outlineAmbientShadowColor="@color/biru"
                             android:scaleType="centerCrop"
                             app:shapeAppearance="@style/ImageStyle2"
                             />
+
                     </LinearLayout>
                 </LinearLayout>
 
@@ -204,7 +204,6 @@
                         />
 
                     <LinearLayout
-                        android:layout_marginStart="5dp"
                         android:layout_width="150dp"
                         android:layout_height="200dp"
                         android:orientation="vertical"

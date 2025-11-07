@@ -34,7 +34,7 @@ public class CompressFile {
             inputStream.close();
 
             // The new size we want to scale to
-            final int REQUIRED_SIZE = 100;
+            final int REQUIRED_SIZE = 400;
 
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
@@ -45,8 +45,9 @@ public class CompressFile {
 
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
-            inputStream = new FileInputStream(file);
+            o2.inPreferredConfig = Bitmap.Config.RGB_565;
 
+            inputStream = new FileInputStream(file);
             Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
 
             ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -89,9 +90,9 @@ public class CompressFile {
                 FileOutputStream outputStream = new FileOutputStream(newFile);
 
                 if (getFileExt(file.getName()).equals("png") || getFileExt(file.getName()).equals("PNG")) {
-                    selectedBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                    selectedBitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream);
                 } else {
-                    selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
                 }
 
                 return newFile;

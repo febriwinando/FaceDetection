@@ -45,6 +45,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -100,6 +101,7 @@ import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.geolocation.GetLocation;
 import go.pemkott.appsandroidmobiletebingtinggi.kameralampiran.CameraLampiranActivity;
+import go.pemkott.appsandroidmobiletebingtinggi.kehadiran.AbsensiKehadiranActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFotoLampiran;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.Lokasi;
@@ -145,7 +147,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
     String kegiatanlainnya, jamMasuk, jamPulang, hariIni;
     String tanggal;
     StringBuilder keterangan;
-    String jam_masuk, jam_pulang, batasWaktu;
+    String batasWaktu;
     SimpleDateFormat hari;
 
     String fotoTaging = null, lampiran = null;
@@ -178,6 +180,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
     LocationRequest locationRequest;
     File file;
 
+    boolean statuskehadiran;
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,8 +227,6 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         datauser();
 
         Intent intent = getIntent();
-        jam_masuk = DashboardVersiOne.jam_masuk;
-        jam_pulang = DashboardVersiOne.jam_pulang;
         titleDinasLuar.setText(intent.getStringExtra("title"));
 
 
@@ -294,15 +295,21 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         selected = rgKehadiran.getCheckedRadioButtonId();
         radioSelectedKehadiran = findViewById(selected);
 
-////        if (Build.VERSION.SDK_INT < 18 &&
-////                !Settings.Secure.getString(this.getContentResolver(), Settings
-////                        .Secure.ALLOW_MOCK_LOCATION).equals("0")) {
-////            mockLocationsEnabled = true;
-////        } else{
-//            mockLocationsEnabled = true;
-////        }
 
         startLocationUpdates();
+        rbTanggal = SIMPLE_FORMAT_TANGGAL.format(new Date());
+
+        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployeID, rbTanggal);
+
+        if (checkPresence){
+            statuskehadiran = true;
+            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployeID+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
+
+        }else{
+            statuskehadiran = false;
+            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployeID+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     public void fokusLokasi(View view){
@@ -368,7 +375,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
                     rbPosisi = "tl-masuk";
 
-                    if (jam_masuk == null){
+                    if (!statuskehadiran){
 
                         if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
                             showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
@@ -382,15 +389,15 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
                     }
 
-                }
-                else {
+                } else {
+
                     rbPosisi = "tl-pulang";
-                    if (jam_pulang == null){
+                    if (statuskehadiran){
                         if (tagingTimePeriksa.getTime() < pulangPeriksa.getTime() ){
                             showMessage("Peringatan", "Anda belum dapat mengisi absensi pulang.");
                         }else{
 
-                            if(jam_masuk == null ){
+                            if(!statuskehadiran){
                                 kirimdata(rbValid, rbPosisi, rbStatus, "masukpulang", jamPulang);
                             }else{
                                 kirimdata(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
@@ -401,6 +408,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                     }else{
                         showMessage("Peringatan", "Anda sudah mengisi absensi pulang.");
                     }
+
                 }
             }
         }
@@ -475,8 +483,32 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                     dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
                     return;
                 }
-                if(response.body().isStatus()){
-                    viewSukses(TugasLapanganFinalActivity.this);
+                if(Objects.requireNonNull(response.body()).isStatus()){
+
+                    if (statuskehadiran){
+                        if (Objects.equals(ketKehadiran, "pulang")) {
+                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployeID, tanggal, rbJam, posisi, status, rbLat, rbLng, rbKet);
+                            if (inserted) {
+                                progressDialog.dismiss();
+                                viewSukses(TugasLapanganFinalActivity.this);
+                            }
+                        }
+                    } else {
+                        if (Objects.equals(ketKehadiran, "masuk")){
+                            boolean inserted = databaseHelper.insertPresence(sEmployeID, tanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
+                            if (inserted) {
+                                progressDialog.dismiss();
+                                viewSukses(TugasLapanganFinalActivity.this);
+                            }
+                        } else if (Objects.equals(ketKehadiran, "masukpulang")) {
+                            boolean inserted = databaseHelper.insertPresencePulang(sEmployeID, tanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
+                            if (inserted) {
+                                progressDialog.dismiss();
+                                viewSukses(TugasLapanganFinalActivity.this);
+                            }
+                        }
+                    }
+
                 }else{
                     dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, response.body().getRemarks(), "");
                 }

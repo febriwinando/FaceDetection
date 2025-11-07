@@ -2,7 +2,6 @@ package go.pemkott.appsandroidmobiletebingtinggi.NewDashboard;
 
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.BULAN;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.HARI_TEXT;
-import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.SIMPLE_FORMAT_JAM_TAGING;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.SIMPLE_FORMAT_TANGGAL;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.TAHUN;
 import static go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat.TANGGAL;
@@ -46,9 +45,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +54,6 @@ import go.pemkott.appsandroidmobiletebingtinggi.DeteksiWajah.DetectorActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.ProfileActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
 import go.pemkott.appsandroidmobiletebingtinggi.api.HttpService;
-import go.pemkott.appsandroidmobiletebingtinggi.api.RetroClient;
 import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.dinasluarkantor.perjalanandinas.SppdActivity;
@@ -67,7 +63,6 @@ import go.pemkott.appsandroidmobiletebingtinggi.izin.keperluanpribadi.KeperluanP
 import go.pemkott.appsandroidmobiletebingtinggi.izin.sakit.SakitActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.izinsift.JadwalIzinSiftActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.kehadiransift.JadwalSiftActivity;
-import go.pemkott.appsandroidmobiletebingtinggi.model.CheckAbsensi;
 import go.pemkott.appsandroidmobiletebingtinggi.model.CheckUpdate;
 import go.pemkott.appsandroidmobiletebingtinggi.model.KegiatanIzin;
 import go.pemkott.appsandroidmobiletebingtinggi.model.Koordinat;
@@ -76,7 +71,6 @@ import go.pemkott.appsandroidmobiletebingtinggi.rekap.RekapAbsensActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.singkronjadwal.SettingAdapter;
 import go.pemkott.appsandroidmobiletebingtinggi.singkronjadwal.TimeTebleSetting;
 import go.pemkott.appsandroidmobiletebingtinggi.singkronjadwalsift.CalendarJadwalSiftActivity;
-import go.pemkott.appsandroidmobiletebingtinggi.utils.NetworkUtils;
 import go.pemkott.appsandroidmobiletebingtinggi.verifikasi.ValidasiNewActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -362,6 +356,8 @@ public class DashboardVersiOne extends AppCompatActivity {
 
 
         dataValidasi(sVerifikator, sEmployee_id);
+
+
         int version = 0;
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -371,6 +367,24 @@ public class DashboardVersiOne extends AppCompatActivity {
         }
 
         checkupdate(version);
+
+        tvJamMasuk.setText("--:--");
+        tvJamPulang.setText("--:--");
+
+        Cursor getPresence = databaseHelper.getPresenceByEmployeeAndDate(sEmployee_id, toDay);
+
+        if (getPresence != null && getPresence.moveToFirst()) {
+            String jamMasuk = getPresence.getString(getPresence.getColumnIndexOrThrow(DatabaseHelper.P_JAM_MASUK));
+            String jamPulang = getPresence.getString(getPresence.getColumnIndexOrThrow(DatabaseHelper.P_JAM_PULANG));
+
+            if (jamMasuk != null && !jamMasuk.isEmpty()) {
+                tvJamMasuk.setText(jamMasuk);
+            }
+
+            if (jamPulang != null && !jamPulang.isEmpty()) {
+                tvJamPulang.setText(jamPulang);
+            }
+        }
     }
 
 
@@ -412,7 +426,6 @@ public class DashboardVersiOne extends AppCompatActivity {
                 if (!response.isSuccessful()) {
                     return;
                 }
-                int hasilCheckUpdate = 0 ;
                 List<CheckUpdate> checkUpdates = response.body();
                 for (CheckUpdate checkUpdate : checkUpdates) {
                     if (checkUpdate.getVersion() > version) {
@@ -424,16 +437,7 @@ public class DashboardVersiOne extends AppCompatActivity {
                         }
 
                     }
-                    hasilCheckUpdate += 1;
                 }
-
-
-                if (hasilCheckUpdate == checkUpdates.size()){
-
-                    periksaDataAbsensi();
-
-                }
-
             }
 
             @Override
@@ -442,244 +446,10 @@ public class DashboardVersiOne extends AppCompatActivity {
 
             }
         });
-
     }
-
-
-    public void periksaDataAbsensi(){
-        String tanggal = SIMPLE_FORMAT_TANGGAL.format(new Date());
-        Date hariini = null;
-        try {
-            hariini = SIMPLE_FORMAT_TANGGAL.parse(tanggal);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(hariini);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        Date newDate = calendar.getTime();
-        String infoJadwalhariini = SIMPLE_FORMAT_TANGGAL.format(newDate);
-
-        if (statusSift.equals("0")){
-
-            if (NetworkUtils.isConnected(this)){
-                toDay = SIMPLE_FORMAT_TANGGAL.format(new Date());
-                periksaAbsensi(toDay, sEmployee_id);
-            }else{
-                dialogView.pesanError(DashboardVersiOne.this);
-            }
-
-        }else{
-
-            Cursor checkToday = databaseHelper.getInfoJadwalSiftToday(sEmployee_id, infoJadwalhariini);
-
-            if (checkToday.getCount() > 0){
-                while (checkToday.moveToNext()){
-                    String idSift = checkToday.getString(2);
-                    Cursor infoSift = databaseHelper.getDataSift(sOPD, idSift);
-                    if (infoSift.getCount()==0){
-                        return;
-                    }
-
-                    while (infoSift.moveToNext()){
-
-                        String jamSekarangString = SIMPLE_FORMAT_JAM_TAGING.format(new Date());
-                        Date jamSekarang = null, jamAbsenMalam = null, batasWaktuJamMalam =null;
-                        try {
-                            jamSekarang = SIMPLE_FORMAT_JAM_TAGING.parse(jamSekarangString);
-                            batasWaktuJamMalam = SIMPLE_FORMAT_JAM_TAGING.parse("12:00");
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if (infoSift.getString(2).equals("malam")){
-                            if (jamSekarang.getTime() < batasWaktuJamMalam.getTime()){
-                                if (NetworkUtils.isConnectedMobile(DashboardVersiOne.this) || NetworkUtils.isConnectedWifi(DashboardVersiOne.this)){
-                                    if (NetworkUtils.isConnectedFast(DashboardVersiOne.this)){
-                                        periksaAbsensiSiftMalam(infoJadwalhariini, sEmployee_id);
-                                    }else{
-                                        dialogView.pesanError(DashboardVersiOne.this);
-                                    }
-                                }
-
-                            }else{
-                                if (NetworkUtils.isConnectedMobile(DashboardVersiOne.this) || NetworkUtils.isConnectedWifi(DashboardVersiOne.this)){
-                                    if (NetworkUtils.isConnectedFast(DashboardVersiOne.this)){
-                                        toDay = SIMPLE_FORMAT_TANGGAL.format(new Date());
-                                        periksaAbsensi(toDay, sEmployee_id);
-                                    }else{
-                                        dialogView.pesanError(DashboardVersiOne.this);
-                                    }
-                                }else{
-                                    dialogView.pesanError(DashboardVersiOne.this);
-                                }
-                            }
-                        }else{
-                            if (NetworkUtils.isConnectedMobile(DashboardVersiOne.this) || NetworkUtils.isConnectedWifi(DashboardVersiOne.this)){
-                                if (NetworkUtils.isConnectedFast(DashboardVersiOne.this)){
-                                    toDay = SIMPLE_FORMAT_TANGGAL.format(new Date());
-                                    periksaAbsensi(toDay, sEmployee_id);
-                                }else{
-                                    dialogView.pesanError(DashboardVersiOne.this);
-                                }
-                            }else{
-                                dialogView.pesanError(DashboardVersiOne.this);
-                            }
-                        }
-
-                    }
-                }
-
-            }else{
-                if (NetworkUtils.isConnectedMobile(DashboardVersiOne.this) || NetworkUtils.isConnectedWifi(DashboardVersiOne.this)){
-                    if (NetworkUtils.isConnectedFast(DashboardVersiOne.this)){
-                        toDay = SIMPLE_FORMAT_TANGGAL.format(new Date());
-                        periksaAbsensi(toDay, sEmployee_id);
-                    }else{
-                        dialogView.pesanError(DashboardVersiOne.this);
-                    }
-                }else{
-                    dialogView.pesanError(DashboardVersiOne.this);
-                }
-            }
-
-        }
-    }
-
-    public void periksaAbsensi(String tanggal, String idE){
-        Call<CheckAbsensi> call = RetroClient.getInstance().getApi().checkabsensi(tanggal, idE);
-        call.enqueue(new Callback<CheckAbsensi>() {
-            @Override
-            public void onResponse(@NonNull Call<CheckAbsensi> call, @NonNull Response<CheckAbsensi> response) {
-                if (!response.isSuccessful()) {
-                    jam_masuk = null;
-                    tvJamMasuk.setText("--:--");
-
-                    jam_pulang = null;
-                    tvJamPulang.setText("--:--");
-                    dialogView.viewNotifKosong(DashboardVersiOne.this, "Gagal memeriksa data absensi,", "mohon periksa internet anda.");
-                }
-
-                assert !(response.body() == null);
-                if (response.body().isStatus()) {
-
-                    jam_masuk = response.body().getJam_masuk();
-                    if (response.body().getJam_masuk() == null) {
-                        tvJamMasuk.setText("--:--");
-                    } else {
-                        tvJamMasuk.setText(jam_masuk);
-                    }
-
-                    jam_pulang = response.body().getJam_pulang();
-                    if (response.body().getJam_pulang() == null) {
-                        tvJamPulang.setText("--:--");
-                    } else {
-                        tvJamPulang.setText(jam_pulang);
-                    }
-                    checkGPS();
-
-                } else {
-
-                    jam_masuk = null;
-                    tvJamMasuk.setText("--:--");
-
-                    jam_pulang = null;
-                    tvJamPulang.setText("--:--");
-                    checkGPS();
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<CheckAbsensi> call, @NonNull Throwable t) {
-                dialogView.pesanError(DashboardVersiOne.this);
-
-            }
-        });
-
-
-    }
-
-
-
-    public void periksaAbsensiSiftMalam(String siftMalam, String idE){
-        Call<CheckAbsensi> call = RetroClient.getInstance().getApi().checkabsensisiftmalam(siftMalam, idE);
-        call.enqueue(new Callback<CheckAbsensi>() {
-            @Override
-            public void onResponse(@NonNull Call<CheckAbsensi> call, @NonNull Response<CheckAbsensi> response) {
-                if (!response.isSuccessful()) {
-                    getLocation();
-                    checkGPS();
-                    jam_masuk = null;
-                    tvJamMasuk.setText("--:--");
-
-                    jam_pulang = null;
-                    tvJamPulang.setText("--:--");
-                    dialogView.viewNotifKosong(DashboardVersiOne.this, "Gagal memeriksa data absensi,", "mohon periksa internet anda.");
-                    return;
-                }
-
-                int periksaabsenpulang = 0;
-                assert !(response.body() == null);
-                if (response.body().isStatus()) {
-
-                    jam_masuk = response.body().getJam_masuk();
-                    if (response.body().getJam_masuk() == null || response.body().getJam_masuk().isEmpty()) {
-                        tvJamMasuk.setText("--:--");
-                        jam_masuk = null;
-                    } else {
-                        tvJamMasuk.setText(jam_masuk);
-                    }
-
-                    jam_pulang = response.body().getJam_pulang();
-                    if (response.body().getJam_pulang() == null || response.body().getJam_pulang().isEmpty()) {
-                        tvJamPulang.setText("--:--");
-                        jam_pulang = null;
-                    } else {
-                        periksaabsenpulang = 1;
-                        tvJamPulang.setText(jam_pulang);
-                    }
-
-                    getLocation();
-                    checkGPS();
-
-
-                } else {
-
-                    jam_masuk = null;
-                    tvJamMasuk.setText("--:--");
-
-                    jam_pulang = null;
-                    tvJamPulang.setText("--:--");
-
-                    getLocation();
-                    checkGPS();
-
-
-                }
-
-
-
-
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<CheckAbsensi> call, @NonNull Throwable t) {
-                getLocation();
-                checkGPS();
-                dialogView.pesanError(DashboardVersiOne.this);
-            }
-        });
-
-
-    }
-
 
     public void checkGPS(){
         if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-
             AlertDialog.Builder builder = new AlertDialog.Builder(DashboardVersiOne.this, R.style.ThemeOverlay_App_MaterialAlertDialog);
             builder.setCancelable(false);
             builder.setTitle("Peringatan!");
@@ -766,7 +536,7 @@ public class DashboardVersiOne extends AppCompatActivity {
     private void setUpReferencesIzin() {
         LinearLayout layoutBottomSheetIzin = findViewById(R.id.bottom_sheet_izin_one);
         sheetBehaviorIzin = BottomSheetBehavior.from(layoutBottomSheetIzin);
-//
+
         sheetBehaviorIzin.setState(BottomSheetBehavior.STATE_COLLAPSED);
         sheetBehaviorIzin.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -907,7 +677,6 @@ public class DashboardVersiOne extends AppCompatActivity {
         });
 
         dialogJadwalKerja.show();
-
     }
 
 
