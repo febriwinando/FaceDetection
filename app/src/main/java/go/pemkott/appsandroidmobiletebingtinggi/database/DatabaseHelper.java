@@ -32,7 +32,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -487,6 +490,101 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return exists;
     }
+
+    public boolean insertOrUpdatePresenceRange(String employeeId, String startDate, String endDate,
+                                               String jamMasuk, String jamPulang,
+                                               String lat, String lng, String keterangan) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean allSuccess = true; // hasil akhir proses
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date start = sdf.parse(startDate);
+            Date end = sdf.parse(endDate);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(start);
+
+            while (!calendar.getTime().after(end)) {
+                String currentDate = sdf.format(calendar.getTime());
+                boolean success = false;
+
+                // 🔍 cek apakah data sudah ada
+                Cursor cursor = db.rawQuery(
+                        "SELECT " + P_JAM_MASUK + ", " + P_JAM_PULANG +
+                                " FROM " + PRESENCES +
+                                " WHERE " + P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
+                        new String[]{employeeId, currentDate}
+                );
+
+                ContentValues values = new ContentValues();
+
+                if (cursor != null && cursor.moveToFirst()) {
+                    // ✅ Data sudah ada → update hanya jika masih kosong/null
+                    String existingJamMasuk = cursor.getString(0);
+                    String existingJamPulang = cursor.getString(1);
+
+                    if (existingJamMasuk == null || existingJamMasuk.isEmpty()) {
+                        values.put(P_JAM_MASUK, jamMasuk);
+                        values.put(P_POSISI_MASUK, "pd");
+                        values.put(P_STATUS_MASUK, "perjalanan dinas");
+                        values.put(P_LAT_MASUK, lat);
+                        values.put(P_LNG_MASUK, lng);
+                        values.put(P_KET_MASUK, keterangan);
+                    }
+
+                    if (existingJamPulang == null || existingJamPulang.isEmpty()) {
+                        values.put(P_JAM_PULANG, jamPulang);
+                        values.put(P_POSISI_PULANG, "pd");
+                        values.put(P_STATUS_PULANG, "perjalanan dinas");
+                        values.put(P_LAT_PULANG, lat);
+                        values.put(P_LNG_PULANG, lng);
+                        values.put(P_KET_PULANG, keterangan);
+                    }
+
+                    if (values.size() > 0) {
+                        success = db.update(PRESENCES, values,
+                                P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
+                                new String[]{employeeId, currentDate}) > 0;
+                    } else {
+                        success = true; // tidak perlu update (sudah ada semua)
+                    }
+
+                } else {
+                    // 🆕 Data belum ada → insert baru lengkap
+                    values.put(P_EMPLOYEE_ID, employeeId);
+                    values.put(P_TANGGAL, currentDate);
+                    values.put(P_JAM_MASUK, jamMasuk);
+                    values.put(P_JAM_PULANG, jamPulang);
+                    values.put(P_POSISI_MASUK, "pd");
+                    values.put(P_POSISI_PULANG, "pd");
+                    values.put(P_STATUS_MASUK, "perjalanan dinas");
+                    values.put(P_STATUS_PULANG, "perjalanan dinas");
+                    values.put(P_LAT_MASUK, lat);
+                    values.put(P_LAT_PULANG, lat);
+                    values.put(P_LNG_MASUK, lng);
+                    values.put(P_LNG_PULANG, lng);
+                    values.put(P_KET_MASUK, keterangan);
+                    values.put(P_KET_PULANG, keterangan);
+
+                    success = db.insert(PRESENCES, null, values) != -1;
+                }
+
+                if (cursor != null) cursor.close();
+
+                if (!success) allSuccess = false;
+
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            allSuccess = false;
+        }
+
+        return allSuccess;
+    }
+
 
 
 

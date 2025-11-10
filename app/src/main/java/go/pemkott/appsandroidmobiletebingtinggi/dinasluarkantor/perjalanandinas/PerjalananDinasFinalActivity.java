@@ -36,7 +36,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
@@ -48,6 +47,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -60,7 +60,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -85,7 +84,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -93,15 +91,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
-import go.pemkott.appsandroidmobiletebingtinggi.NewDashboard.DashboardVersiOne;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
 import go.pemkott.appsandroidmobiletebingtinggi.api.ResponsePOJO;
 import go.pemkott.appsandroidmobiletebingtinggi.api.RetroClient;
 import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.kameralampiran.CameraLampiranActivity;
-import go.pemkott.appsandroidmobiletebingtinggi.kehadiran.AbsensiKehadiranActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFotoLampiran;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.Lokasi;
@@ -152,7 +149,6 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
     String tanggal;
     StringBuilder keterangan;
     String sTglMulai, sTglSAmpai;
-    String jam_masuk, jam_pulang;
     String dariTanggal, sampaiTanggal;
     SimpleDateFormat hari;
     DatePickerDialog datePickerDialogMulai, datePickerDialogSampai;
@@ -235,8 +231,6 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
         datauser();
 
         Intent intent = getIntent();
-        jam_masuk = DashboardVersiOne.jam_masuk;
-        jam_pulang = DashboardVersiOne.jam_pulang;
         titleDinasLuar.setText(intent.getStringExtra("title"));
 
         kegiatans.clear();
@@ -299,17 +293,32 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
         });
 
         requestPermission();
-        dataKegiatan();
+        setupDataKegiatan();
 
         datePickerMulai();
         datePickerSampai();
-//        Program Data
-
 
         startLocationUpdates();
 
+
+
     }
 
+
+
+    public void setupDataKegiatan() {
+        // Ambil data dari SppdActivity
+        kegiatans.clear();
+        if (SppdActivity.kegiatanCheckedPd != null) {
+            kegiatans.addAll(SppdActivity.kegiatanCheckedPd);
+        }
+
+        kegiatanlainnya = (SppdActivity.kegiatansPdLainnya != null)
+                ? SppdActivity.kegiatansPdLainnya
+                : "kosong";
+
+        dataKegiatan();
+    }
     private void setRoundedBackground(FragmentContainerView view) {
         // Ganti warna dan radius sesuai kebutuhan Anda
         int backgroundColor = getResources().getColor(R.color.biru);
@@ -361,33 +370,34 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
         }
     }
 
-    public void dataKegiatan(){
+    public void dataKegiatan() {
         StringBuilder stringBuilder = new StringBuilder();
         keterangan = new StringBuilder();
-        for (int i = 0 ; i < kegiatans.size(); i++){
-            if ((i - 1) == kegiatans.size() || i == kegiatans.size()-1 ){
-                keterangan.append(kegiatans.get(i));
-                stringBuilder.append(kegiatans.get(i));
-            }else{
-                stringBuilder.append(kegiatans.get(i)).append(", ");
-                keterangan.append(kegiatans.get(i)).append(", ");
+
+        for (int i = 0; i < kegiatans.size(); i++) {
+            String kegiatan = kegiatans.get(i);
+            if (i == kegiatans.size() - 1) {
+                keterangan.append(kegiatan);
+                stringBuilder.append(kegiatan);
+            } else {
+                stringBuilder.append(kegiatan).append(", ");
+                keterangan.append(kegiatan).append(", ");
             }
         }
 
-        if (!kegiatanlainnya.equals("kosong")){
-            if (kegiatans.size() == 0){
+        // Aman dari NullPointerException
+        if (!"kosong".equals(kegiatanlainnya)) {
+            if (kegiatans.isEmpty()) {
                 stringBuilder.append(kegiatanlainnya);
-            }else{
+            } else {
                 stringBuilder.append(", ").append(kegiatanlainnya);
             }
         }
 
-        rbKet = String.valueOf(stringBuilder);
-        tvKegiatanFinal.setText(stringBuilder);
-
-
+        rbKet = stringBuilder.toString();
+        Toast.makeText(this, rbKet, Toast.LENGTH_SHORT).show();
+        tvKegiatanFinal.setText(rbKet);
     }
-
     public String getPDFPath(Uri uri){
         String absolutePath = "";
         try{
@@ -480,40 +490,6 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
     }
     static final int REQUEST_CODE_LAMPIRAN = 341;
 
-    private void ambilFoto(String addFoto){
-        String filename = "photo";
-        File storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        try {
-            imageFile = File.createTempFile(filename, ".png", storageDirectory);
-            currentPhotoPath = null;
-            currentPhotoPath = imageFile.getAbsolutePath();
-            Uri imageUri = FileProvider.getUriForFile(PerjalananDinasFinalActivity.this, "go.pemkott.appsandroidmobiletebingtinggi.fileprovider", imageFile);
-            if (addFoto.equals("kegiatan")){
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, 1);
-                progressDialog = new ProgressDialog(PerjalananDinasFinalActivity.this, R.style.AppCompatAlertDialogStyle);
-                progressDialog.setMessage("Sedang memproses...");
-                progressDialog.show();
-
-            }else{
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, 2);
-                progressDialog = new ProgressDialog(PerjalananDinasFinalActivity.this, R.style.AppCompatAlertDialogStyle);
-                progressDialog.setMessage("Sedang memproses...");
-                progressDialog.show();
-
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     String fotoFileLampiran;
 
     @Override
@@ -661,12 +637,12 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
         Date today = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(today);
-        c.add( Calendar.MONTH, 1);
+        c.add( Calendar.MONTH, 0);
         long maxDate = c.getTime().getTime();
 
         Calendar d = Calendar.getInstance();
         d.setTime(today);
-        d.add( Calendar.MONTH, -4);
+        d.add( Calendar.MONTH, -1);
         long minDate = d.getTime().getTime();
         datePickerDialogMulai = new DatePickerDialog(this, style, dateSetListener, tahun, bulan, hari);
         datePickerDialogMulai.getDatePicker().setMaxDate(maxDate);
@@ -708,7 +684,7 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
 
         Calendar d = Calendar.getInstance();
         d.setTime(today);
-        d.add( Calendar.MONTH, -2);
+        d.add( Calendar.MONTH, 0);
         long minDate = d.getTime().getTime();
         datePickerDialogSampai = new DatePickerDialog(this, style, dateSetListener, tahun, bulan, hari);
         datePickerDialogSampai.getDatePicker().setMaxDate(maxDate);
@@ -794,28 +770,10 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 e.printStackTrace();
             }
 
-            if (jam_masuk != null){
-
-                if (jam_pulang != null){
-                    kirimdata(rbValid, rbPosisi, rbStatus);
-
-                }else {
-                    if (dateDariTgl.getTime() > dateSampaiTgl.getTime()){
-                        dialogView.viewNotifKosong(this, "Perhatikan kembali rentang waktu yang anda pilih.", "Tidak boleh terbalik.");
-                    }else{
-                        kirimdata(rbValid, rbPosisi, rbStatus);
-                    }
-                }
-
-            }else if(jam_masuk == null && jam_pulang == null){
-
-                if (dateDariTgl.getTime() > dateSampaiTgl.getTime()){
-                    dialogView.viewNotifKosong(this, "Perhatikan kembali rentang waktu yang anda pilih.", "Tidak boleh terbalik.");
-                }else{
-                    kirimdata(rbValid, rbPosisi, rbStatus);
-
-                }
-
+            if (Objects.requireNonNull(dateDariTgl).getTime() > Objects.requireNonNull(dateSampaiTgl).getTime()){
+                dialogView.viewNotifKosong(this, "Perhatikan kembali rentang waktu yang anda pilih.", "Tidak boleh terbalik.");
+            }else{
+                kirimdata(rbValid, rbPosisi, rbStatus);
             }
         }
 
@@ -850,23 +808,37 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 rbFakeGPS
         );
 
+
+
         call.enqueue(new Callback<ResponsePOJO>() {
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
                 if (!response.isSuccessful()){
                     dialogproses.dismiss();
-
                     dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
                     return;
+
                 }
 
                 if(response.body().isStatus()){
-                    dialogproses.dismiss();
+                    boolean result = databaseHelper.insertOrUpdatePresenceRange(
+                            sEmployeID,
+                            dariTanggal,
+                            sampaiTanggal,
+                            rbJam,
+                            rbJam,
+                            rbLat,
+                            rbLng,
+                            rbKet
+                    );
 
-                    viewSukses(PerjalananDinasFinalActivity.this);
+                    if (result) {
+                        dialogproses.dismiss();
+                        viewSukses(PerjalananDinasFinalActivity.this);
+                    }
+
                 }else{
                     dialogproses.dismiss();
-
                     dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, response.body().getRemarks(), "");
                 }
 

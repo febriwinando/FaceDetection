@@ -305,12 +305,8 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
         if (checkPresence){
             statuskehadiran = true;
-            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployeID+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
-
         }else{
             statuskehadiran = false;
-            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployeID+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -338,8 +334,6 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
     public void uploadImages(){
 
-        Log.d("TLTL", "Kirim data");
-
         if (jamMasuk == null || jamPulang == null ){
             dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, "Anda tidak memiliki Jadwal Kerja untuk hari ini", "");
 
@@ -359,8 +353,6 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
             selected = rgKehadiran.getCheckedRadioButtonId();
             radioSelectedKehadiran = findViewById(selected);
 
-            Log.d("TLTL", selected+" - "+radioSelectedKehadiran.getText().toString().trim());
-
             String rbStatus = "hadir";
 
             Date pulangPeriksa = null, tagingTimePeriksa = null;
@@ -377,15 +369,10 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
             if (tagingTimePeriksa.getTime() < dateBatasWaktu.getTime()){
                 dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, "Anda hanya dapat mengisi absen masuk, "+batasWaktu+" menit sebelum Jam Masuk", "");
             }else{
-                Log.d("TLTL", "Kirim data, status kehadiran: "+statuskehadiran);
-
                 String rbPosisi = "";
                 if (radioSelectedKehadiran.getText().toString().trim().equals("MASUK")){
 
                     rbPosisi = "tl-masuk";
-                    Log.d("TLTL", "Kirim data, status rbPosisi: "+rbPosisi);
-
-                    Toast.makeText(mContext, " - "+rbPosisi, Toast.LENGTH_SHORT).show();
                     if (!statuskehadiran){
 
                         if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
@@ -402,12 +389,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
                 } else if(radioSelectedKehadiran.getText().toString().trim().equals("PULANG")) {
 
-
                     rbPosisi = "tl-pulang";
-                    Toast.makeText(mContext, " - "+rbPosisi, Toast.LENGTH_SHORT).show();
-
-                    Log.d("TLTL", "Kirim data, status rbPosisi: "+rbPosisi);
-
                     if (statuskehadiran){
                         if (tagingTimePeriksa.getTime() < pulangPeriksa.getTime() ){
                             showMessage("Peringatan", "Anda belum dapat mengisi absensi pulang.");
@@ -497,15 +479,13 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                     dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
                     return;
                 }
+                assert response.body() != null;
                 if(response.body().isStatus()){
-                    Log.d("TLTL", "Kirim data, status kehadiran: "+statuskehadiran+" "+sEmployeID+" - "+rbTanggal);
 
                     if (statuskehadiran){
                         if (Objects.equals(ketKehadiran, "pulang")) {
                             boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployeID, rbTanggal, rbJam, posisi, status, rbLat, rbLng, rbKet);
                             if (inserted) {
-                                Log.d("TLTL", "Status pulang: "+ketKehadiran+" - "+statuskehadiran+" "+sEmployeID+" - "+rbTanggal);
-
                                 progressDialog.dismiss();
                                 viewSukses(TugasLapanganFinalActivity.this);
                             }
@@ -515,16 +495,12 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
                             boolean inserted = databaseHelper.insertPresence(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
                             if (inserted) {
-                                Log.d("TLTL", "Status masuk: "+ketKehadiran+" - "+statuskehadiran+" "+sEmployeID+" - "+rbTanggal);
-
                                 progressDialog.dismiss();
                                 viewSukses(TugasLapanganFinalActivity.this);
                             }
                         } else if (Objects.equals(ketKehadiran, "masukpulang")) {
                             boolean inserted = databaseHelper.insertPresencePulang(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
                             if (inserted) {
-                                Log.d("TLTL", "Status masukpulang: "+ketKehadiran+" - "+statuskehadiran+" "+sEmployeID+" - "+rbTanggal);
-
                                 progressDialog.dismiss();
                                 viewSukses(TugasLapanganFinalActivity.this);
                             }

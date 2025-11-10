@@ -31,10 +31,11 @@ import go.pemkott.appsandroidmobiletebingtinggi.model.Kegiatan;
 public class SppdActivity extends AppCompatActivity {
 
     private static ArrayList<Kegiatan> listPd = new ArrayList<>();
-    public static ArrayList<String> kegiatanCheckedPd = new ArrayList<String>();
+
     private ArrayList<String>  kegiatanAddedPd = new ArrayList<String>();
+    public static ArrayList<String> kegiatanCheckedPd = new ArrayList<String>();
     static ArrayList<String> kegiatansListPd = new ArrayList<String>();
-    public static String kegiatansPdLainnya;
+    public static String kegiatansPdLainnya = "kosong";
     StringBuffer buffer2;
 
     EditText etkegiatanPdLainnya;
@@ -69,21 +70,6 @@ public class SppdActivity extends AppCompatActivity {
 
         showRecyclerList();
 
-        etkegiatanPdLainnya.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
     }
 
 
@@ -107,22 +93,21 @@ public class SppdActivity extends AppCompatActivity {
         }
     }
     DialogView dialogView = new DialogView(SppdActivity.this);
-    public void nextKegiatanPd(View view){
-        if (!etkegiatanPdLainnya.getText().toString().isEmpty()){
+    public void nextKegiatanPd(View view) {
+        // Pastikan EditText sudah terhubung
+        if (etkegiatanPdLainnya != null && !etkegiatanPdLainnya.getText().toString().isEmpty()) {
             kegiatansPdLainnya = etkegiatanPdLainnya.getText().toString();
-
-        }else{
+        } else {
             kegiatansPdLainnya = "kosong";
         }
 
-        if (kegiatanCheckedPd.isEmpty() && kegiatansPdLainnya.equals("kosong")){
-            dialogView.viewNotifKosong(SppdActivity.this, "Anda Harus Mengisi Kegiatan Yang Dilaksanakan.", "");
-        }else {
-
+        if (kegiatanCheckedPd.isEmpty() && "kosong".equals(kegiatansPdLainnya)) {
+            dialogView.viewNotifKosong(SppdActivity.this,
+                    "Anda Harus Mengisi Kegiatan Yang Dilaksanakan.", "");
+        } else {
             Intent intentPd = new Intent(SppdActivity.this, DetectorActivity.class);
             intentPd.putExtra("title", "Isi Data Perjalanan Dinas");
             startActivity(intentPd);
-
         }
     }
 

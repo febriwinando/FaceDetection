@@ -220,12 +220,8 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
         if (checkPresence){
             statuskehadiran = true;
-            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployId+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
-
         }else{
             statuskehadiran = false;
-            Toast.makeText(mContext, String.valueOf(statuskehadiran)+ " - "+sEmployId+ " - "+ rbTanggal, Toast.LENGTH_SHORT).show();
-
         }
 
 
