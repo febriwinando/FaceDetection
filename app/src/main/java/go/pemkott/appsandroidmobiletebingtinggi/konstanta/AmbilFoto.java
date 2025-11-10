@@ -154,7 +154,7 @@ public class AmbilFoto {
         }
 
         // The new size we want to scale to
-        final int REQUIRED_SIZE = 110;
+        final int REQUIRED_SIZE = 70;
 
         // Find the correct scale value. It should be the power of 2.
         int scale = 1;
@@ -186,64 +186,13 @@ public class AmbilFoto {
 
 
     public Bitmap fileBitmapCompress(File file){
-//        BitmapFactory.Options o = new BitmapFactory.Options();
-//        o.inJustDecodeBounds = true;
-//
-//
-//        if (getFileExt(file.getName()).equals("png") || getFileExt(file.getName()).equals("PNG")) {
-//            o.inSampleSize = 2;
-//        }
-//
-//
-//        FileInputStream inputStream = null;
-//        try {
-//            inputStream = new FileInputStream(file);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        BitmapFactory.decodeStream(inputStream, null, o);
-//        try {
-//            inputStream.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//
-//        // The new size we want to scale to
-//        final int REQUIRED_SIZE = 110;
-//
-//        // Find the correct scale value. It should be the power of 2.
-//        int scale = 1;
-//        while (o.outWidth / scale / 2  >= REQUIRED_SIZE &&
-//                o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-//            scale *= 2;
-//        }
-//
-//
-//        BitmapFactory.Options o2 = new BitmapFactory.Options();
-//        o2.inSampleSize = scale;
-//        try {
-//            inputStream = new FileInputStream(file);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
-//
-//        return selectedBitmap;
 
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
 
 
         if (getFileExt(file.getName()).equals("png") || getFileExt(file.getName()).equals("PNG")) {
-            if (Build.VERSION.SDK_INT > 21){
-                o.inSampleSize = 2;
-            }else{
-                o.inSampleSize = 2;
-            }
+            o.inSampleSize = 2;
         } else {
             if (Build.VERSION.SDK_INT > 27){
                 o.inSampleSize = 2;
@@ -267,7 +216,7 @@ public class AmbilFoto {
         }
 
         // The new size we want to scale to
-        final int REQUIRED_SIZE = 110;
+        final int REQUIRED_SIZE = 70;
 
         // Find the correct scale value. It should be the power of 2.
         int scale = 1;

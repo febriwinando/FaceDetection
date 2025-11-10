@@ -704,24 +704,30 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                     return;
                 }
 
-                if(Objects.requireNonNull(response.body()).isStatus()){
+                if(response.body().isStatus()){
+//                    Log.d("StatusKehadiran", absensi+" - "+statuskehadiran+" - "+sEmployId+" "+rbTanggal);
+
                     if (statuskehadiran){
                         if (Objects.equals(absensi, "pulang")) {
-                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(idpegawai, tanggal, jam, posisi, status, lat, lng, ket);
+//                            Log.d("StatusKehadiran", absensi+" - "+statuskehadiran+" - "+sEmployId+" "+rbTanggal);
+
+                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployId, rbTanggal, rbJam, posisi, status, lat, lng, ket);
                             if (inserted) {
                                 dialogproses.dismiss();
                                 viewSukses(AbsensiKehadiranActivity.this);
                             }
                         }
                     } else {
+//                        Log.d("StatusKehadiran", absensi+" - "+statuskehadiran+" - "+sEmployId+" "+rbTanggal);
+
                         if (Objects.equals(absensi, "masuk")){
-                            boolean inserted = databaseHelper.insertPresence(idpegawai, tanggal, jam, posisi,status,lat,lng,ket);
+                            boolean inserted = databaseHelper.insertPresence(sEmployId, rbTanggal, rbJam, posisi, status, lat, lng, ket);
                             if (inserted) {
                                 dialogproses.dismiss();
                                 viewSukses(AbsensiKehadiranActivity.this);
                             }
                         } else if (Objects.equals(absensi, "masukpulang")) {
-                            boolean inserted = databaseHelper.insertPresencePulang(idpegawai, tanggal, jam, posisi,status,lat,lng,ket);
+                            boolean inserted = databaseHelper.insertPresencePulang(sEmployId, rbTanggal, rbJam, posisi, status, lat, lng, ket);
                             if (inserted) {
                                 dialogproses.dismiss();
                                 viewSukses(AbsensiKehadiranActivity.this);

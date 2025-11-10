@@ -367,6 +367,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+
+    public boolean updatePresenceByIdAndDate(
+            String id,
+            String tanggal,
+            String jamPulang,
+            String posisiPulang,
+            String statusPulang,
+            String latPulang,
+            String lngPulang,
+            String ketPulang
+    ) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        values.put(P_JAM_PULANG, jamPulang);
+        values.put(P_POSISI_PULANG, posisiPulang);
+        values.put(P_STATUS_PULANG, statusPulang);
+        values.put(P_LAT_PULANG, latPulang);
+        values.put(P_LNG_PULANG, lngPulang);
+        values.put(P_KET_PULANG, ketPulang);
+
+        int result = db.update(
+                PRESENCES,
+                values,
+                P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?",
+                new String[]{id, tanggal}
+        );
+
+        db.close();
+        return result > 0; // return true jika update berhasil
+    }
+
     public boolean insertPresencePulang(
             String employeeId,
             String tanggal,
@@ -455,36 +488,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    public boolean updatePresenceByIdAndDate(
-            String id,
-            String tanggal,
-            String jamPulang,
-            String posisiPulang,
-            String statusPulang,
-            String latPulang,
-            String lngPulang,
-            String ketPulang
-    ) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
-        values.put(P_JAM_PULANG, jamPulang);
-        values.put(P_POSISI_PULANG, posisiPulang);
-        values.put(P_STATUS_PULANG, statusPulang);
-        values.put(P_LAT_PULANG, latPulang);
-        values.put(P_LNG_PULANG, lngPulang);
-        values.put(P_KET_PULANG, ketPulang);
-
-        int result = db.update(
-                PRESENCES,
-                values,
-                P_ID + " = ? AND " + P_TANGGAL + " = ?",
-                new String[]{id, tanggal}
-        );
-
-        db.close();
-        return result > 0; // return true jika update berhasil
-    }
 
 //    public boolean updatePresenceByIdAndDate(
 //            String id,

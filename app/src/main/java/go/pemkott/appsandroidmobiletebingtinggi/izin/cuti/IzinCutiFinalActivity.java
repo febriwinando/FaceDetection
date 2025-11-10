@@ -678,7 +678,6 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                 ekslampiran = "jpg";
 
                 handlerProgressDialog();
-
             }
             else if (requestCode == 33 && resultCode == Activity.RESULT_OK && data != null){
                 requestPermission();
