@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -80,7 +82,9 @@ public class SppdActivity extends AppCompatActivity {
             Kegiatan kegiatans = new Kegiatan();
             kegiatans.setKegiatan(kegiatansListPd.get(position));
             list.add(kegiatans);
+
         }
+        Log.d("PerjalananDinasList", list.toString());
         return list;
     }
 
@@ -126,7 +130,7 @@ public class SppdActivity extends AppCompatActivity {
     }
 
     private void showSelectedKegiatan(Kegiatan kegiatan) {
-        if (kegiatan.isChecked() == true ){
+        if (kegiatan.isChecked()){
             kegiatanCheckedPd.add(kegiatan.getKegiatan());
 
             buffer2 = new StringBuffer();
@@ -151,6 +155,8 @@ public class SppdActivity extends AppCompatActivity {
             }
 
         }
+
+        Log.d("PerjalananDinasList", kegiatanCheckedPd.toString());
 
     }
 

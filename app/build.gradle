@@ -120,6 +120,6 @@ dependencies {
     //noinspection BomWithoutPlatform
     implementation('com.google.firebase:firebase-bom:34.5.0')
     implementation("androidx.multidex:multidex:2.0.1")
-    androidTestImplementation 'org.junit.jupiter:junit-jupiter:6.0.1'
+//    androidTestImplementation 'org.junit.jupiter:junit-jupiter:6.0.1'
 
 }

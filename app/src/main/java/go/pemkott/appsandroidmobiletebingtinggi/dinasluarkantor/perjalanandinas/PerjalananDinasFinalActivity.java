@@ -233,9 +233,9 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
         Intent intent = getIntent();
         titleDinasLuar.setText(intent.getStringExtra("title"));
 
-        kegiatans.clear();
-        kegiatans = SppdActivity.kegiatanCheckedPd;
-        kegiatanlainnya = SppdActivity.kegiatansPdLainnya;
+//        kegiatans.clear();
+//        kegiatans = SppdActivity.kegiatanCheckedPd;
+//        kegiatanlainnya = SppdActivity.kegiatansPdLainnya;
 
         String myDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()+ "/eabsensi";
         String fileName = intent.getStringExtra("fileName");
@@ -870,18 +870,6 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
 
     }
 
-    //Bottom Sheet
-//    private void setUpReferences() {
-//        LinearLayout layoutBottomSheet = findViewById(R.id.bottom_sheet_rentang_waktu);
-//        upsheet = findViewById(R.id.upsheet);
-//        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-//    }
-    //endregion
-    //region Helper methods for OnClick
-
-    //endregion
-//Bottom Sheet
-
     //  Maps
     //    Maps
     private void setupViewModel() {
@@ -890,23 +878,14 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
 
     public void checkLocationPermission() {
         int hasWriteStoragePermission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hasWriteStoragePermission = getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-            if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
-                return;
-            }
-//            subscribeToLocationUpdate();
-        } else {
-//            subscribeToLocationUpdate();
+        hasWriteStoragePermission = getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
+            return;
         }
     }
 
 
-    public void backAbsenMasuk(View view){
-        stopLocationUpdates();
-        finish();
-    }
 
     private void setupViews() {
 
@@ -915,10 +894,6 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
         mapFragment.getMapAsync(this);
 
     }
-
-//    private void stopLocationUpdates() {
-//        locationViewModel.getLocationHelper(mContext).stopLocationUpdates();
-//    }
 
     public void fokusLokasi(View view){
         startLocationUpdates();
