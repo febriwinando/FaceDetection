@@ -820,7 +820,7 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
 
                 }
 
-                if(response.body().isStatus()){
+                if(Objects.requireNonNull(response.body()).isStatus()){
                     boolean result = databaseHelper.insertOrUpdatePresenceRange(
                             sEmployeID,
                             dariTanggal,

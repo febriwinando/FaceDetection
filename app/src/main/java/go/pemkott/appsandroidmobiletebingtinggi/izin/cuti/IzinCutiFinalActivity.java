@@ -94,7 +94,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import go.pemkott.appsandroidmobiletebingtinggi.NewDashboard.DashboardVersiOne;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
 import go.pemkott.appsandroidmobiletebingtinggi.api.ResponsePOJO;
 import go.pemkott.appsandroidmobiletebingtinggi.api.RetroClient;
@@ -127,9 +126,6 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
     Lokasi lokasi = new Lokasi();
     //Gmaps
 
-    //Buttom Sheet
-    private BottomSheetBehavior sheetBehavior;
-    //Buttom Sheet
 
 
     DatabaseHelper databaseHelper;
@@ -234,8 +230,6 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
         datauser();
 
         Intent intent = getIntent();
-        jam_masuk = DashboardVersiOne.jam_masuk;
-        jam_pulang = DashboardVersiOne.jam_pulang;
         titleDinasLuar.setText(intent.getStringExtra("title"));
 
 
@@ -301,7 +295,7 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
 
         datePickerMulai();
         datePickerSampai();
-//
+
         if (Build.VERSION.SDK_INT < 18 &&
                 !Settings.Secure.getString(this.getContentResolver(), Settings
                         .Secure.ALLOW_MOCK_LOCATION).equals("0")) {
@@ -424,12 +418,27 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                 progressDialog.dismiss();
 
                 if (!response.isSuccessful()){
+
                     dialogView.viewNotifKosong(IzinCutiFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
                     return;
                 }
 
                 if(response.body().isStatus()){
-                    viewSukses(IzinCutiFinalActivity.this);
+                    boolean result = databaseHelper.insertCutitoPresences(
+                            sEmployeID,
+                            dariTanggal,
+                            sampaiTanggal,
+                            "",
+                            "",
+                            rbLat,
+                            rbLng,
+                            rbKet
+                    );
+
+                    if (result) {
+                        progressDialog.dismiss();
+                        viewSukses(IzinCutiFinalActivity.this);
+                    }
                 }else{
                     dialogView.viewNotifKosong(IzinCutiFinalActivity.this, response.body().getRemarks(), "");
                 }
@@ -818,8 +827,6 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
         }
         return absolutePath;
     }
-
-    ByteArrayOutputStream byteArrayTag, byteArraySurat;
 
 
     public void llMulaiDinasLuar(View view){

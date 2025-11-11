@@ -137,6 +137,7 @@ public abstract class CameraActivity extends AppCompatActivity
     TextView tvPeringatanWajah;
     ProgressBar pbTakeGambar;
     public static Activity cameraActivity;
+    ImageView ivTutupKamera;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
 
@@ -174,6 +175,7 @@ public abstract class CameraActivity extends AppCompatActivity
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
         pbTakeGambar = findViewById(R.id.pbTakeGambar);
+        ivTutupKamera = findViewById(R.id.ivTutupKamera);
 
         ivTakeFoto.setEnabled(false);
 
@@ -237,6 +239,14 @@ public abstract class CameraActivity extends AppCompatActivity
 
         plusImageView.setOnClickListener(this);
         minusImageView.setOnClickListener(this);
+
+
+        ivTutupKamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
 
@@ -429,7 +439,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(
-            final int requestCode, final String[] permissions, final int[] grantResults) {
+            final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST) {
             if (allPermissionsGranted(grantResults)) {
@@ -450,24 +460,18 @@ public abstract class CameraActivity extends AppCompatActivity
     }
 
     private boolean hasPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
+        return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
-                Toast.makeText(
-                        CameraActivity.this,
-                        "Camera permission is required for this demo",
-                        Toast.LENGTH_LONG)
-                        .show();
-            }
-            requestPermissions(new String[]{PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+        if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
+            Toast.makeText(
+                            CameraActivity.this,
+                            "Camera permission is required for this demo",
+                            Toast.LENGTH_LONG)
+                    .show();
         }
+        requestPermissions(new String[]{PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
     }
 
     // Returns true if the device supports the required hardware level, or better.

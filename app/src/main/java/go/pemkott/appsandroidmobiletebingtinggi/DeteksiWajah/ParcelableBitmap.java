@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ParcelableBitmap implements Parcelable {
-    private Bitmap bitmap;
+    private final Bitmap bitmap;
 
     public ParcelableBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
