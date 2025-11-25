@@ -79,7 +79,7 @@ dependencies {
     //noinspection Aligned16KB
     implementation 'org.pytorch:pytorch_android_lite:2.1.0'
     //noinspection Aligned16KB
-    implementation 'org.pytorch:pytorch_android_torchvision_lite:2.1.0'
+    implementation 'org.pytorch:pytorch_android_torchvision:2.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.activity:activity:1.11.0'
     implementation 'com.google.android.play:app-update:2.1.0'

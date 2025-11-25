@@ -57,6 +57,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerVertical="true"/>
+
         <LinearLayout
             android:layout_toEndOf="@+id/civProfilPegawai"
             android:layout_width="wrap_content"
@@ -126,6 +127,7 @@
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"
                     android:gravity="center_vertical">
+
                     <ImageView
                         app:srcCompat="@drawable/ic_jabatan"
                         android:background="@drawable/backgoundovalbirusift"
