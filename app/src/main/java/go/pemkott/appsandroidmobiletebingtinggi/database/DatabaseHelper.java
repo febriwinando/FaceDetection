@@ -117,24 +117,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // =========================
     // TABLE: PRESENCES
     // =========================
-    public static final String PRESENCES = "presences";
-    public static final String P_ID = "ID";
-    public static final String P_EMPLOYEE_ID = "EMPLOYEEID";
-    public static final String P_TANGGAL = "TANGGAL";
-    public static final String P_JAM_MASUK = "JAM_MASUK";
-    public static final String P_JAM_PULANG = "JAM_PULANG";
-    public static final String P_POSISI_MASUK = "POSISI_MASUK";
-    public static final String P_POSISI_PULANG = "POSISI_PULANG";
-    public static final String P_STATUS_MASUK = "STATUS_MASUK";
-    public static final String P_STATUS_PULANG = "STATUS_PULANG";
-    public static final String P_LAT_MASUK = "LAT_MASUK";
-    public static final String P_LAT_PULANG = "LAT_PULANG";
-    public static final String P_LNG_MASUK = "LNG_MASUK";
-    public static final String P_LNG_PULANG = "LNG_PULANG";
-    public static final String P_KET_MASUK = "KET_MASUK";
-    public static final String P_KET_PULANG = "KET_PULANG";
-    public static final String P_VALID_MASUK = "VALID_MASUK";
-    public static final String P_VALID_PULANG = "VALID_PULANG";
+//    public static final String PRESENCES = "presences";
+//    public static final String P_ID = "ID";
+//    public static final String P_EMPLOYEE_ID = "EMPLOYEEID";
+//    public static final String P_TANGGAL = "TANGGAL";
+//    public static final String P_JAM_MASUK = "JAM_MASUK";
+//    public static final String P_JAM_PULANG = "JAM_PULANG";
+//    public static final String P_POSISI_MASUK = "POSISI_MASUK";
+//    public static final String P_POSISI_PULANG = "POSISI_PULANG";
+//    public static final String P_STATUS_MASUK = "STATUS_MASUK";
+//    public static final String P_STATUS_PULANG = "STATUS_PULANG";
+//    public static final String P_LAT_MASUK = "LAT_MASUK";
+//    public static final String P_LAT_PULANG = "LAT_PULANG";
+//    public static final String P_LNG_MASUK = "LNG_MASUK";
+//    public static final String P_LNG_PULANG = "LNG_PULANG";
+//    public static final String P_KET_MASUK = "KET_MASUK";
+//    public static final String P_KET_PULANG = "KET_PULANG";
+//    public static final String P_VALID_MASUK = "VALID_MASUK";
+//    public static final String P_VALID_PULANG = "VALID_PULANG";
 
     // =========================
     // TABLE: KOORDINAT
@@ -282,24 +282,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // =========================
             // TABLE: PRESENCES
             // =========================
-            db.execSQL("CREATE TABLE " + PRESENCES + " (" +
-                    P_ID + " TEXT, " +
-                    P_EMPLOYEE_ID + " TEXT, " +
-                    P_TANGGAL + " TEXT, " +
-                    P_JAM_MASUK + " TEXT, " +
-                    P_JAM_PULANG + " TEXT, " +
-                    P_POSISI_MASUK + " TEXT, " +
-                    P_POSISI_PULANG + " TEXT, " +
-                    P_STATUS_MASUK + " TEXT, " +
-                    P_STATUS_PULANG + " TEXT, " +
-                    P_LAT_MASUK + " TEXT, " +
-                    P_LAT_PULANG + " TEXT, " +
-                    P_LNG_MASUK + " TEXT, " +
-                    P_LNG_PULANG + " TEXT, " +
-                    P_KET_MASUK + " TEXT, " +
-                    P_KET_PULANG + " TEXT, " +
-                    P_VALID_MASUK + " TEXT, " +
-                    P_VALID_PULANG + " TEXT)");
+//            db.execSQL("CREATE TABLE " + PRESENCES + " (" +
+//                    P_ID + " TEXT, " +
+//                    P_EMPLOYEE_ID + " TEXT, " +
+//                    P_TANGGAL + " TEXT, " +
+//                    P_JAM_MASUK + " TEXT, " +
+//                    P_JAM_PULANG + " TEXT, " +
+//                    P_POSISI_MASUK + " TEXT, " +
+//                    P_POSISI_PULANG + " TEXT, " +
+//                    P_STATUS_MASUK + " TEXT, " +
+//                    P_STATUS_PULANG + " TEXT, " +
+//                    P_LAT_MASUK + " TEXT, " +
+//                    P_LAT_PULANG + " TEXT, " +
+//                    P_LNG_MASUK + " TEXT, " +
+//                    P_LNG_PULANG + " TEXT, " +
+//                    P_KET_MASUK + " TEXT, " +
+//                    P_KET_PULANG + " TEXT, " +
+//                    P_VALID_MASUK + " TEXT, " +
+//                    P_VALID_PULANG + " TEXT)");
 
             // =========================
             // TABLE: EMPLOYEE
@@ -327,7 +327,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 absensi.execSQL("DROP TABLE IF EXISTS " + TEMPORARY_PD);
                 absensi.execSQL("DROP TABLE IF EXISTS " + RESOURCE_KEGIATAN);
                 absensi.execSQL("DROP TABLE IF EXISTS " + TIMETABLE);
-                absensi.execSQL("DROP TABLE IF EXISTS " + PRESENCES);
+//                absensi.execSQL("DROP TABLE IF EXISTS " + PRESENCES);
                 absensi.execSQL("DROP TABLE IF EXISTS " + KOORDINAT);
                 absensi.execSQL("DROP TABLE IF EXISTS " + INFO_MP);
                 absensi.execSQL("DROP TABLE IF EXISTS " + KOORDINAT_E);
@@ -343,96 +343,96 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // =========================
 // INSERT DATA KE TABEL PRESENCES
 // =========================
-    public boolean insertPresence(
-            String employeeId,
-            String tanggal,
-            String jamMasuk,
-            String posisiMasuk,
-            String statusMasuk,
-            String latMasuk,
-            String lngMasuk,
-            String ketMasuk
-    ) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(P_EMPLOYEE_ID, employeeId);
-        values.put(P_TANGGAL, tanggal);
-        values.put(P_JAM_MASUK, jamMasuk);
-        values.put(P_POSISI_MASUK, posisiMasuk);
-        values.put(P_STATUS_MASUK, statusMasuk);
-        values.put(P_LAT_MASUK, latMasuk);
-        values.put(P_LNG_MASUK, lngMasuk);
-        values.put(P_KET_MASUK, ketMasuk);
-
-        long result = db.insert(PRESENCES, null, values);
-        db.close();
-
-        // Jika insert berhasil, result != -1
-        return result != -1;
-    }
-
-
-    public boolean updatePresenceByIdAndDate(
-            String id,
-            String tanggal,
-            String jamPulang,
-            String posisiPulang,
-            String statusPulang,
-            String latPulang,
-            String lngPulang,
-            String ketPulang
-    ) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+//    public boolean insertPresence(
+//            String employeeId,
+//            String tanggal,
+//            String jamMasuk,
+//            String posisiMasuk,
+//            String statusMasuk,
+//            String latMasuk,
+//            String lngMasuk,
+//            String ketMasuk
+//    ) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(P_EMPLOYEE_ID, employeeId);
+//        values.put(P_TANGGAL, tanggal);
+//        values.put(P_JAM_MASUK, jamMasuk);
+//        values.put(P_POSISI_MASUK, posisiMasuk);
+//        values.put(P_STATUS_MASUK, statusMasuk);
+//        values.put(P_LAT_MASUK, latMasuk);
+//        values.put(P_LNG_MASUK, lngMasuk);
+//        values.put(P_KET_MASUK, ketMasuk);
+//
+//        long result = db.insert(PRESENCES, null, values);
+//        db.close();
+//
+//        // Jika insert berhasil, result != -1
+//        return result != -1;
+//    }
 
 
-        values.put(P_JAM_PULANG, jamPulang);
-        values.put(P_POSISI_PULANG, posisiPulang);
-        values.put(P_STATUS_PULANG, statusPulang);
-        values.put(P_LAT_PULANG, latPulang);
-        values.put(P_LNG_PULANG, lngPulang);
-        values.put(P_KET_PULANG, ketPulang);
+//    public boolean updatePresenceByIdAndDate(
+//            String id,
+//            String tanggal,
+//            String jamPulang,
+//            String posisiPulang,
+//            String statusPulang,
+//            String latPulang,
+//            String lngPulang,
+//            String ketPulang
+//    ) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//
+//        values.put(P_JAM_PULANG, jamPulang);
+//        values.put(P_POSISI_PULANG, posisiPulang);
+//        values.put(P_STATUS_PULANG, statusPulang);
+//        values.put(P_LAT_PULANG, latPulang);
+//        values.put(P_LNG_PULANG, lngPulang);
+//        values.put(P_KET_PULANG, ketPulang);
+//
+//        int result = db.update(
+//                PRESENCES,
+//                values,
+//                P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?",
+//                new String[]{id, tanggal}
+//        );
+//
+//        db.close();
+//        return result > 0; // return true jika update berhasil
+//    }
 
-        int result = db.update(
-                PRESENCES,
-                values,
-                P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?",
-                new String[]{id, tanggal}
-        );
-
-        db.close();
-        return result > 0; // return true jika update berhasil
-    }
-
-    public boolean insertPresencePulang(
-            String employeeId,
-            String tanggal,
-            String jamPulang,
-            String posisiPulang,
-            String statusPulang,
-            String latPulang,
-            String lngPulang,
-            String ketPulang
-    ) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(P_EMPLOYEE_ID, employeeId);
-        values.put(P_TANGGAL, tanggal);
-        values.put(P_JAM_PULANG, jamPulang);
-        values.put(P_POSISI_PULANG, posisiPulang);
-        values.put(P_STATUS_PULANG, statusPulang);
-        values.put(P_LAT_PULANG, latPulang);
-        values.put(P_LNG_PULANG, lngPulang);
-        values.put(P_KET_PULANG, ketPulang);
-
-        long result = db.insert(PRESENCES, null, values);
-        db.close();
-
-        // Jika insert berhasil, result != -1
-        return result != -1;
-    }
+//    public boolean insertPresencePulang(
+//            String employeeId,
+//            String tanggal,
+//            String jamPulang,
+//            String posisiPulang,
+//            String statusPulang,
+//            String latPulang,
+//            String lngPulang,
+//            String ketPulang
+//    ) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(P_EMPLOYEE_ID, employeeId);
+//        values.put(P_TANGGAL, tanggal);
+//        values.put(P_JAM_PULANG, jamPulang);
+//        values.put(P_POSISI_PULANG, posisiPulang);
+//        values.put(P_STATUS_PULANG, statusPulang);
+//        values.put(P_LAT_PULANG, latPulang);
+//        values.put(P_LNG_PULANG, lngPulang);
+//        values.put(P_KET_PULANG, ketPulang);
+//
+//        long result = db.insert(PRESENCES, null, values);
+//        db.close();
+//
+//        // Jika insert berhasil, result != -1
+//        return result != -1;
+//    }
 
 
     public boolean insertDataEmployee(String id, String atasan_id1, String atasan_id2, String position_id, String opd_id,
@@ -471,245 +471,245 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getPresenceByEmployeeAndDate(String employeeId, String tanggal) {
-        SQLiteDatabase db = this.getReadableDatabase();
+//    public Cursor getPresenceByEmployeeAndDate(String employeeId, String tanggal) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        String query = "SELECT * FROM " + PRESENCES + " WHERE " +
+//                P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?";
+//
+//        return db.rawQuery(query, new String[]{employeeId, tanggal});
+//    }
+//    public boolean checkPresenceByDate(String employeeId, String tanggal) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery(
+//                "SELECT * FROM " + PRESENCES + " WHERE " +
+//                        P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?",
+//                new String[]{employeeId, tanggal}
+//        );
+//
+//        boolean exists = cursor.getCount() > 0;
+//        cursor.close();
+//        db.close();
+//        return exists;
+//    }
 
-        String query = "SELECT * FROM " + PRESENCES + " WHERE " +
-                P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?";
-
-        return db.rawQuery(query, new String[]{employeeId, tanggal});
-    }
-    public boolean checkPresenceByDate(String employeeId, String tanggal) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT * FROM " + PRESENCES + " WHERE " +
-                        P_EMPLOYEE_ID + " = ? AND " + P_TANGGAL + " = ?",
-                new String[]{employeeId, tanggal}
-        );
-
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        db.close();
-        return exists;
-    }
-
-    public boolean insertOrUpdatePresenceRange(String employeeId, String startDate, String endDate,
-                                               String jamMasuk, String jamPulang,
-                                               String lat, String lng, String keterangan) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        boolean allSuccess = true; // hasil akhir proses
-
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date start = sdf.parse(startDate);
-            Date end = sdf.parse(endDate);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(start);
-
-            while (!calendar.getTime().after(end)) {
-                String currentDate = sdf.format(calendar.getTime());
-                boolean success = false;
-
-                // 🔍 cek apakah data sudah ada
-                Cursor cursor = db.rawQuery(
-                        "SELECT " + P_JAM_MASUK + ", " + P_JAM_PULANG +
-                                " FROM " + PRESENCES +
-                                " WHERE " + P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
-                        new String[]{employeeId, currentDate}
-                );
-
-                ContentValues values = new ContentValues();
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    // ✅ Data sudah ada → update hanya jika masih kosong/null
-                    String existingJamMasuk = cursor.getString(0);
-                    String existingJamPulang = cursor.getString(1);
-
-                    if (existingJamMasuk == null || existingJamMasuk.isEmpty()) {
-                        values.put(P_JAM_MASUK, jamMasuk);
-                        values.put(P_POSISI_MASUK, "pd");
-                        values.put(P_STATUS_MASUK, "perjalanan dinas");
-                        values.put(P_LAT_MASUK, lat);
-                        values.put(P_LNG_MASUK, lng);
-                        values.put(P_KET_MASUK, keterangan);
-                    }
-
-                    if (existingJamPulang == null || existingJamPulang.isEmpty()) {
-                        values.put(P_JAM_PULANG, jamPulang);
-                        values.put(P_POSISI_PULANG, "pd");
-                        values.put(P_STATUS_PULANG, "perjalanan dinas");
-                        values.put(P_LAT_PULANG, lat);
-                        values.put(P_LNG_PULANG, lng);
-                        values.put(P_KET_PULANG, keterangan);
-                    }
-
-                    if (values.size() > 0) {
-                        success = db.update(PRESENCES, values,
-                                P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
-                                new String[]{employeeId, currentDate}) > 0;
-                    } else {
-                        success = true; // tidak perlu update (sudah ada semua)
-                    }
-
-                } else {
-                    // 🆕 Data belum ada → insert baru lengkap
-                    values.put(P_EMPLOYEE_ID, employeeId);
-                    values.put(P_TANGGAL, currentDate);
-                    values.put(P_JAM_MASUK, jamMasuk);
-                    values.put(P_JAM_PULANG, jamPulang);
-                    values.put(P_POSISI_MASUK, "pd");
-                    values.put(P_POSISI_PULANG, "pd");
-                    values.put(P_STATUS_MASUK, "perjalanan dinas");
-                    values.put(P_STATUS_PULANG, "perjalanan dinas");
-                    values.put(P_LAT_MASUK, lat);
-                    values.put(P_LAT_PULANG, lat);
-                    values.put(P_LNG_MASUK, lng);
-                    values.put(P_LNG_PULANG, lng);
-                    values.put(P_KET_MASUK, keterangan);
-                    values.put(P_KET_PULANG, keterangan);
-
-                    success = db.insert(PRESENCES, null, values) != -1;
-                }
-
-                if (cursor != null) cursor.close();
-
-                if (!success) allSuccess = false;
-
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            allSuccess = false;
-        }
-
-        return allSuccess;
-    }
+//    public boolean insertOrUpdatePresenceRange(String employeeId, String startDate, String endDate,
+//                                               String jamMasuk, String jamPulang,
+//                                               String lat, String lng, String keterangan) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        boolean allSuccess = true; // hasil akhir proses
+//
+//        try {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//            Date start = sdf.parse(startDate);
+//            Date end = sdf.parse(endDate);
+//
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(start);
+//
+//            while (!calendar.getTime().after(end)) {
+//                String currentDate = sdf.format(calendar.getTime());
+//                boolean success = false;
+//
+//                // 🔍 cek apakah data sudah ada
+//                Cursor cursor = db.rawQuery(
+//                        "SELECT " + P_JAM_MASUK + ", " + P_JAM_PULANG +
+//                                " FROM " + PRESENCES +
+//                                " WHERE " + P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
+//                        new String[]{employeeId, currentDate}
+//                );
+//
+//                ContentValues values = new ContentValues();
+//
+//                if (cursor != null && cursor.moveToFirst()) {
+//                    // ✅ Data sudah ada → update hanya jika masih kosong/null
+//                    String existingJamMasuk = cursor.getString(0);
+//                    String existingJamPulang = cursor.getString(1);
+//
+//                    if (existingJamMasuk == null || existingJamMasuk.isEmpty()) {
+//                        values.put(P_JAM_MASUK, jamMasuk);
+//                        values.put(P_POSISI_MASUK, "pd");
+//                        values.put(P_STATUS_MASUK, "perjalanan dinas");
+//                        values.put(P_LAT_MASUK, lat);
+//                        values.put(P_LNG_MASUK, lng);
+//                        values.put(P_KET_MASUK, keterangan);
+//                    }
+//
+//                    if (existingJamPulang == null || existingJamPulang.isEmpty()) {
+//                        values.put(P_JAM_PULANG, jamPulang);
+//                        values.put(P_POSISI_PULANG, "pd");
+//                        values.put(P_STATUS_PULANG, "perjalanan dinas");
+//                        values.put(P_LAT_PULANG, lat);
+//                        values.put(P_LNG_PULANG, lng);
+//                        values.put(P_KET_PULANG, keterangan);
+//                    }
+//
+//                    if (values.size() > 0) {
+//                        success = db.update(PRESENCES, values,
+//                                P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
+//                                new String[]{employeeId, currentDate}) > 0;
+//                    } else {
+//                        success = true; // tidak perlu update (sudah ada semua)
+//                    }
+//
+//                } else {
+//                    // 🆕 Data belum ada → insert baru lengkap
+//                    values.put(P_EMPLOYEE_ID, employeeId);
+//                    values.put(P_TANGGAL, currentDate);
+//                    values.put(P_JAM_MASUK, jamMasuk);
+//                    values.put(P_JAM_PULANG, jamPulang);
+//                    values.put(P_POSISI_MASUK, "pd");
+//                    values.put(P_POSISI_PULANG, "pd");
+//                    values.put(P_STATUS_MASUK, "perjalanan dinas");
+//                    values.put(P_STATUS_PULANG, "perjalanan dinas");
+//                    values.put(P_LAT_MASUK, lat);
+//                    values.put(P_LAT_PULANG, lat);
+//                    values.put(P_LNG_MASUK, lng);
+//                    values.put(P_LNG_PULANG, lng);
+//                    values.put(P_KET_MASUK, keterangan);
+//                    values.put(P_KET_PULANG, keterangan);
+//
+//                    success = db.insert(PRESENCES, null, values) != -1;
+//                }
+//
+//                if (cursor != null) cursor.close();
+//
+//                if (!success) allSuccess = false;
+//
+//                calendar.add(Calendar.DAY_OF_MONTH, 1);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            allSuccess = false;
+//        }
+//
+//        return allSuccess;
+//    }
 
 
-    public boolean insertCutitoPresences(String employeeId, String startDate, String endDate,
-                                               String jamMasuk, String jamPulang,
-                                               String lat, String lng, String keterangan) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        boolean allSuccess = true;
-
-        try {
-
-            List<String> hariKerjaInisial = new ArrayList<>();
-            Cursor timetableCursor = db.rawQuery(
-                    "SELECT "+TT_INISIAL+" FROM timetables WHERE "+TT_EMPLOYEE_ID+" = ?",
-                    new String[]{employeeId}
-            );
-            if (timetableCursor.moveToFirst()) {
-                do {
-                    hariKerjaInisial.add(timetableCursor.getString(0).toLowerCase(Locale.ROOT));
-                } while (timetableCursor.moveToNext());
-                timetableCursor.close();
-            }
-
-            if (hariKerjaInisial.isEmpty()) {
-                // Tidak ada jadwal, hentikan
-                return false;
-            }
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(sdf.parse(startDate));
-
-            Date end = sdf.parse(endDate);
-
-            while (!calendar.getTime().after(end)) {
-                String currentDate = sdf.format(calendar.getTime());
-
-                // 🔹 Dapatkan nama hari dari tanggal saat ini
-                String dayName = new SimpleDateFormat("EEEE", new Locale("id", "ID"))
-                        .format(calendar.getTime())
-                        .toLowerCase(Locale.ROOT);
-
-                // 🔹 Jika hari ini tidak termasuk jadwal kerja, lewati
-                if (!hariKerjaInisial.contains(dayName)) {
-                    calendar.add(Calendar.DAY_OF_MONTH, 1);
-                    continue;
-                }
-
-                // ====================================================
-                // ✅ Insert/update presensi hanya jika hari cocok
-                // ====================================================
-                boolean success = false;
-                Cursor cursor = db.rawQuery(
-                        "SELECT " + P_JAM_MASUK + ", " + P_JAM_PULANG +
-                                " FROM " + PRESENCES +
-                                " WHERE " + P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
-                        new String[]{employeeId, currentDate}
-                );
-
-                ContentValues values = new ContentValues();
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    String existingJamMasuk = cursor.getString(0);
-                    String existingJamPulang = cursor.getString(1);
-
-                    if (existingJamMasuk == null || existingJamMasuk.isEmpty()) {
-                        values.put(P_JAM_MASUK, jamMasuk);
-                        values.put(P_POSISI_MASUK, "pd");
-                        values.put(P_STATUS_MASUK, "perjalanan dinas");
-                        values.put(P_LAT_MASUK, lat);
-                        values.put(P_LNG_MASUK, lng);
-                        values.put(P_KET_MASUK, keterangan);
-                    }
-
-                    if (existingJamPulang == null || existingJamPulang.isEmpty()) {
-                        values.put(P_JAM_PULANG, jamPulang);
-                        values.put(P_POSISI_PULANG, "pd");
-                        values.put(P_STATUS_PULANG, "perjalanan dinas");
-                        values.put(P_LAT_PULANG, lat);
-                        values.put(P_LNG_PULANG, lng);
-                        values.put(P_KET_PULANG, keterangan);
-                    }
-
-                    if (values.size() > 0) {
-                        success = db.update(PRESENCES, values,
-                                P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
-                                new String[]{employeeId, currentDate}) > 0;
-                    } else {
-                        success = true;
-                    }
-
-                } else {
-                    // 🆕 Insert baru
-                    values.put(P_EMPLOYEE_ID, employeeId);
-                    values.put(P_TANGGAL, currentDate);
-                    values.put(P_JAM_MASUK, jamMasuk);
-                    values.put(P_JAM_PULANG, jamPulang);
-                    values.put(P_POSISI_MASUK, "pd");
-                    values.put(P_POSISI_PULANG, "pd");
-                    values.put(P_STATUS_MASUK, "perjalanan dinas");
-                    values.put(P_STATUS_PULANG, "perjalanan dinas");
-                    values.put(P_LAT_MASUK, lat);
-                    values.put(P_LAT_PULANG, lat);
-                    values.put(P_LNG_MASUK, lng);
-                    values.put(P_LNG_PULANG, lng);
-                    values.put(P_KET_MASUK, keterangan);
-                    values.put(P_KET_PULANG, keterangan);
-
-                    success = db.insert(PRESENCES, null, values) != -1;
-                }
-
-                if (cursor != null) cursor.close();
-
-                if (!success) allSuccess = false;
-
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            allSuccess = false;
-        }
-
-        return allSuccess;
-    }
+//    public boolean insertCutitoPresences(String employeeId, String startDate, String endDate,
+//                                               String jamMasuk, String jamPulang,
+//                                               String lat, String lng, String keterangan) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        boolean allSuccess = true;
+//
+//        try {
+//
+//            List<String> hariKerjaInisial = new ArrayList<>();
+//            Cursor timetableCursor = db.rawQuery(
+//                    "SELECT "+TT_INISIAL+" FROM timetables WHERE "+TT_EMPLOYEE_ID+" = ?",
+//                    new String[]{employeeId}
+//            );
+//            if (timetableCursor.moveToFirst()) {
+//                do {
+//                    hariKerjaInisial.add(timetableCursor.getString(0).toLowerCase(Locale.ROOT));
+//                } while (timetableCursor.moveToNext());
+//                timetableCursor.close();
+//            }
+//
+//            if (hariKerjaInisial.isEmpty()) {
+//                // Tidak ada jadwal, hentikan
+//                return false;
+//            }
+//
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(sdf.parse(startDate));
+//
+//            Date end = sdf.parse(endDate);
+//
+//            while (!calendar.getTime().after(end)) {
+//                String currentDate = sdf.format(calendar.getTime());
+//
+//                // 🔹 Dapatkan nama hari dari tanggal saat ini
+//                String dayName = new SimpleDateFormat("EEEE", new Locale("id", "ID"))
+//                        .format(calendar.getTime())
+//                        .toLowerCase(Locale.ROOT);
+//
+//                // 🔹 Jika hari ini tidak termasuk jadwal kerja, lewati
+//                if (!hariKerjaInisial.contains(dayName)) {
+//                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+//                    continue;
+//                }
+//
+//                // ====================================================
+//                // ✅ Insert/update presensi hanya jika hari cocok
+//                // ====================================================
+//                boolean success = false;
+//                Cursor cursor = db.rawQuery(
+//                        "SELECT " + P_JAM_MASUK + ", " + P_JAM_PULANG +
+//                                " FROM " + PRESENCES +
+//                                " WHERE " + P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
+//                        new String[]{employeeId, currentDate}
+//                );
+//
+//                ContentValues values = new ContentValues();
+//
+//                if (cursor != null && cursor.moveToFirst()) {
+//                    String existingJamMasuk = cursor.getString(0);
+//                    String existingJamPulang = cursor.getString(1);
+//
+//                    if (existingJamMasuk == null || existingJamMasuk.isEmpty()) {
+//                        values.put(P_JAM_MASUK, jamMasuk);
+//                        values.put(P_POSISI_MASUK, "pd");
+//                        values.put(P_STATUS_MASUK, "perjalanan dinas");
+//                        values.put(P_LAT_MASUK, lat);
+//                        values.put(P_LNG_MASUK, lng);
+//                        values.put(P_KET_MASUK, keterangan);
+//                    }
+//
+//                    if (existingJamPulang == null || existingJamPulang.isEmpty()) {
+//                        values.put(P_JAM_PULANG, jamPulang);
+//                        values.put(P_POSISI_PULANG, "pd");
+//                        values.put(P_STATUS_PULANG, "perjalanan dinas");
+//                        values.put(P_LAT_PULANG, lat);
+//                        values.put(P_LNG_PULANG, lng);
+//                        values.put(P_KET_PULANG, keterangan);
+//                    }
+//
+//                    if (values.size() > 0) {
+//                        success = db.update(PRESENCES, values,
+//                                P_EMPLOYEE_ID + "=? AND " + P_TANGGAL + "=?",
+//                                new String[]{employeeId, currentDate}) > 0;
+//                    } else {
+//                        success = true;
+//                    }
+//
+//                } else {
+//                    // 🆕 Insert baru
+//                    values.put(P_EMPLOYEE_ID, employeeId);
+//                    values.put(P_TANGGAL, currentDate);
+//                    values.put(P_JAM_MASUK, jamMasuk);
+//                    values.put(P_JAM_PULANG, jamPulang);
+//                    values.put(P_POSISI_MASUK, "pd");
+//                    values.put(P_POSISI_PULANG, "pd");
+//                    values.put(P_STATUS_MASUK, "perjalanan dinas");
+//                    values.put(P_STATUS_PULANG, "perjalanan dinas");
+//                    values.put(P_LAT_MASUK, lat);
+//                    values.put(P_LAT_PULANG, lat);
+//                    values.put(P_LNG_MASUK, lng);
+//                    values.put(P_LNG_PULANG, lng);
+//                    values.put(P_KET_MASUK, keterangan);
+//                    values.put(P_KET_PULANG, keterangan);
+//
+//                    success = db.insert(PRESENCES, null, values) != -1;
+//                }
+//
+//                if (cursor != null) cursor.close();
+//
+//                if (!success) allSuccess = false;
+//
+//                calendar.add(Calendar.DAY_OF_MONTH, 1);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            allSuccess = false;
+//        }
+//
+//        return allSuccess;
+//    }
 
 
 //    public boolean updatePresenceByIdAndDate(

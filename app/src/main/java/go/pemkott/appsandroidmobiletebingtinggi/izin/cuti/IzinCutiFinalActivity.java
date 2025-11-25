@@ -423,25 +423,27 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                     return;
                 }
 
-                if(response.body().isStatus()){
-                    boolean result = databaseHelper.insertCutitoPresences(
-                            sEmployeID,
-                            dariTanggal,
-                            sampaiTanggal,
-                            "",
-                            "",
-                            rbLat,
-                            rbLng,
-                            rbKet
-                    );
+                Log.d("Response Status Izin Cuti", response.body().getRemarks());
 
-                    if (result) {
-                        progressDialog.dismiss();
-                        viewSukses(IzinCutiFinalActivity.this);
-                    }
-                }else{
-                    dialogView.viewNotifKosong(IzinCutiFinalActivity.this, response.body().getRemarks(), "");
-                }
+//                if(response.body().isStatus()){
+//                    boolean result = databaseHelper.insertCutitoPresences(
+//                            sEmployeID,
+//                            dariTanggal,
+//                            sampaiTanggal,
+//                            "",
+//                            "",
+//                            rbLat,
+//                            rbLng,
+//                            rbKet
+//                    );
+//
+//                    if (result) {
+//                        progressDialog.dismiss();
+//                        viewSukses(IzinCutiFinalActivity.this);
+//                    }
+//                }else{
+//                    dialogView.viewNotifKosong(IzinCutiFinalActivity.this, response.body().getRemarks(), "");
+//                }
 
             }
 

@@ -180,7 +180,6 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
     LocationRequest locationRequest;
     File file;
 
-    boolean statuskehadiran;
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,13 +300,13 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         startLocationUpdates();
         rbTanggal = SIMPLE_FORMAT_TANGGAL.format(new Date());
 
-        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployeID, rbTanggal);
-
-        if (checkPresence){
-            statuskehadiran = true;
-        }else{
-            statuskehadiran = false;
-        }
+//        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployeID, rbTanggal);
+//
+//        if (checkPresence){
+//            statuskehadiran = true;
+//        }else{
+//            statuskehadiran = false;
+//        }
     }
 
     public void fokusLokasi(View view){
@@ -373,7 +372,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                 if (radioSelectedKehadiran.getText().toString().trim().equals("MASUK")){
 
                     rbPosisi = "tl-masuk";
-                    if (!statuskehadiran){
+//                    if (!statuskehadiran){
 
                         if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
                             showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
@@ -381,29 +380,29 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                             kirimdata(rbValid, rbPosisi, rbStatus, "masuk", jamMasuk);
                         }
 
-                    }else{
-
-                        showMessage("Peringatan", "Anda sudah mengisi absensi masuk.");
-
-                    }
+//                    }else{
+//
+//                        showMessage("Peringatan", "Anda sudah mengisi absensi masuk.");
+//
+//                    }
 
                 } else if(radioSelectedKehadiran.getText().toString().trim().equals("PULANG")) {
 
                     rbPosisi = "tl-pulang";
-                    if (statuskehadiran){
-                        if (tagingTimePeriksa.getTime() < pulangPeriksa.getTime() ){
-                            showMessage("Peringatan", "Anda belum dapat mengisi absensi pulang.");
-                        }else{
-                            if(!statuskehadiran){
-                                kirimdata(rbValid, rbPosisi, rbStatus, "masukpulang", jamPulang);
-                            }else{
+//                    if (statuskehadiran){
+//                        if (tagingTimePeriksa.getTime() < pulangPeriksa.getTime() ){
+//                            showMessage("Peringatan", "Anda belum dapat mengisi absensi pulang.");
+//                        }else{
+//                            if(!statuskehadiran){
+//                                kirimdata(rbValid, rbPosisi, rbStatus, "masukpulang", jamPulang);
+//                            }else{
                                 kirimdata(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
-                            }
-
-                        }
-                    }else{
-                        showMessage("Peringatan", "Anda sudah mengisi absensi pulang.");
-                    }
+//                            }
+//
+//                        }
+//                    }else{
+//                        showMessage("Peringatan", "Anda sudah mengisi absensi pulang.");
+//                    }
 
                 }
             }
@@ -480,36 +479,38 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                     return;
                 }
                 assert response.body() != null;
-                if(response.body().isStatus()){
+                Log.d("Response Status Tugas Lapangan", response.body().getRemarks());
+//                if(response.body().isStatus()) {
+//
+//                }
+//                    if (statuskehadiran){
+//                        if (Objects.equals(ketKehadiran, "pulang")) {
+//                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployeID, rbTanggal, rbJam, posisi, status, rbLat, rbLng, rbKet);
+//                            if (inserted) {
+//                                progressDialog.dismiss();
+//                                viewSukses(TugasLapanganFinalActivity.this);
+//                            }
+//                        }
+//                    } else {
+//                        if (Objects.equals(ketKehadiran, "masuk")){
+//
+//                            boolean inserted = databaseHelper.insertPresence(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
+//                            if (inserted) {
+//                                progressDialog.dismiss();
+//                                viewSukses(TugasLapanganFinalActivity.this);
+//                            }
+//                        } else if (Objects.equals(ketKehadiran, "masukpulang")) {
+//                            boolean inserted = databaseHelper.insertPresencePulang(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
+//                            if (inserted) {
+//                                progressDialog.dismiss();
+//                                viewSukses(TugasLapanganFinalActivity.this);
+//                            }
+//                        }
+//                    }
 
-                    if (statuskehadiran){
-                        if (Objects.equals(ketKehadiran, "pulang")) {
-                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployeID, rbTanggal, rbJam, posisi, status, rbLat, rbLng, rbKet);
-                            if (inserted) {
-                                progressDialog.dismiss();
-                                viewSukses(TugasLapanganFinalActivity.this);
-                            }
-                        }
-                    } else {
-                        if (Objects.equals(ketKehadiran, "masuk")){
-
-                            boolean inserted = databaseHelper.insertPresence(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
-                            if (inserted) {
-                                progressDialog.dismiss();
-                                viewSukses(TugasLapanganFinalActivity.this);
-                            }
-                        } else if (Objects.equals(ketKehadiran, "masukpulang")) {
-                            boolean inserted = databaseHelper.insertPresencePulang(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
-                            if (inserted) {
-                                progressDialog.dismiss();
-                                viewSukses(TugasLapanganFinalActivity.this);
-                            }
-                        }
-                    }
-
-                }else{
-                    dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, response.body().getRemarks(), "");
-                }
+//                }else{
+//                    dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, response.body().getRemarks(), "");
+//                }
 
             }
 

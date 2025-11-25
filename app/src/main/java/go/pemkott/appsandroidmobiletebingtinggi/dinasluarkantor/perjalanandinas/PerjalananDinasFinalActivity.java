@@ -820,27 +820,29 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
 
                 }
 
-                if(Objects.requireNonNull(response.body()).isStatus()){
-                    boolean result = databaseHelper.insertOrUpdatePresenceRange(
-                            sEmployeID,
-                            dariTanggal,
-                            sampaiTanggal,
-                            rbJam,
-                            rbJam,
-                            rbLat,
-                            rbLng,
-                            rbKet
-                    );
 
-                    if (result) {
-                        dialogproses.dismiss();
-                        viewSukses(PerjalananDinasFinalActivity.this);
-                    }
-
-                }else{
-                    dialogproses.dismiss();
-                    dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, response.body().getRemarks(), "");
-                }
+                Log.d("Response Status Perjalanan Dinas" , response.body().getRemarks());
+//                if(Objects.requireNonNull(response.body()).isStatus()){
+//                    boolean result = databaseHelper.insertOrUpdatePresenceRange(
+//                            sEmployeID,
+//                            dariTanggal,
+//                            sampaiTanggal,
+//                            rbJam,
+//                            rbJam,
+//                            rbLat,
+//                            rbLng,
+//                            rbKet
+//                    );
+//
+//                    if (result) {
+//                        dialogproses.dismiss();
+//                        viewSukses(PerjalananDinasFinalActivity.this);
+//                    }
+//
+//                }else{
+//                    dialogproses.dismiss();
+//                    dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, response.body().getRemarks(), "");
+//                }
 
             }
 

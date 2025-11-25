@@ -371,20 +371,20 @@ public class DashboardVersiOne extends AppCompatActivity {
         tvJamMasuk.setText("--:--");
         tvJamPulang.setText("--:--");
 
-        Cursor getPresence = databaseHelper.getPresenceByEmployeeAndDate(sEmployee_id, toDay);
-
-        if (getPresence != null && getPresence.moveToFirst()) {
-            String jamMasuk = getPresence.getString(getPresence.getColumnIndexOrThrow(DatabaseHelper.P_JAM_MASUK));
-            String jamPulang = getPresence.getString(getPresence.getColumnIndexOrThrow(DatabaseHelper.P_JAM_PULANG));
-
-            if (jamMasuk != null && !jamMasuk.isEmpty()) {
-                tvJamMasuk.setText(jamMasuk);
-            }
-
-            if (jamPulang != null && !jamPulang.isEmpty()) {
-                tvJamPulang.setText(jamPulang);
-            }
-        }
+//        Cursor getPresence = databaseHelper.getPresenceByEmployeeAndDate(sEmployee_id, toDay);
+//
+//        if (getPresence != null && getPresence.moveToFirst()) {
+//            String jamMasuk = getPresence.getString(getPresence.getColumnIndexOrThrow(DatabaseHelper.P_JAM_MASUK));
+//            String jamPulang = getPresence.getString(getPresence.getColumnIndexOrThrow(DatabaseHelper.P_JAM_PULANG));
+//
+//            if (jamMasuk != null && !jamMasuk.isEmpty()) {
+//                tvJamMasuk.setText(jamMasuk);
+//            }
+//
+//            if (jamPulang != null && !jamPulang.isEmpty()) {
+//                tvJamPulang.setText(jamPulang);
+//            }
+//        }
     }
 
 

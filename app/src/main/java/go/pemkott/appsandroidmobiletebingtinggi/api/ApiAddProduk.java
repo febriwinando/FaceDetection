@@ -16,8 +16,8 @@ public interface ApiAddProduk {
     );
 
     @FormUrlEncoded
-    @POST("kehadrianpegawainew")
-    Call<ResponsePOJO> uploadAbsenKehadiran(
+    @POST("kehadiran/masuk")
+    Call<ResponsePOJO> uploadAbsenKehadiranMasuk(
             @Field("fototaging") String encodedImage,
             @Field("absensi") String absensi,
             @Field("eselon") String eselon,
@@ -38,6 +38,31 @@ public interface ApiAddProduk {
             @Field("batas_waktu") String batas_waktu,
             @Field("berakhlak") String berakhlak
     );
+
+    @FormUrlEncoded
+    @POST("kehadiran/pulang")
+    Call<ResponsePOJO> uploadAbsenKehadiranPulang(
+            @Field("fototaging") String encodedImage,
+            @Field("absensi") String absensi,
+            @Field("eselon") String eselon,
+            @Field("employee_id") String id,
+            @Field("timetable_id") String time,
+            @Field("tanggal") String tanggal,
+            @Field("jam_pulang") String jam_pulang,
+            @Field("posisi_pulang") String posisi_pulang,
+            @Field("status_pulang") String status_pulang,
+            @Field("lat_pulang") String lat_pulang,
+            @Field("lng_pulang") String lng_pulang,
+            @Field("ket_pulang") String ket_pulang,
+            @Field("kecepatan") int kecepatan,
+            @Field("opd") String opd,
+            @Field("jam_kantor") String jamkantor,
+            @Field("valid_pulang") String valid_pulang,
+            @Field("fakegps") String fakegps,
+            @Field("batas_waktu") String batas_waktu,
+            @Field("berakhlak") String berakhlak
+    );
+
     @FormUrlEncoded
     @POST("kehadrianpegawaisift")
     Call<ResponsePOJO> uploadAbsenKehadiranSift(

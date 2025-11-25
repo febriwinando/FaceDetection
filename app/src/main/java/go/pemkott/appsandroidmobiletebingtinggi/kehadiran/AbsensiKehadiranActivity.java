@@ -138,7 +138,8 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
     int mock_location = 0;
     File file;
 
-    boolean statuskehadiran;
+//    boolean statuskehadiran;
+
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,14 +217,16 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
         startLocationUpdates();
 
-        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployId,rbTanggal);
+//        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployId,rbTanggal);
+//
+//        if (checkPresence){
+//            statuskehadiran = true;
+//        }else{
+//            statuskehadiran = false;
+//        }
 
-        if (checkPresence){
-            statuskehadiran = true;
-        }else{
-            statuskehadiran = false;
-        }
 
+//        Toast.makeText(mContext, ""+statuskehadiran, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -581,10 +584,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                         String rbValid;
                         if (radioSelectedKehadiran.getText().toString().equals("Masuk")){
 
-                            if (statuskehadiran){
-                                dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Anda sudah mengisi absensi masuk.", "");
-                            }else{
-
                                 if (tagingTime.getTime() >= jamPulangDate.getTime()){
                                     dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.", "");
                                 }
@@ -605,12 +604,9 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                                         eselon = "2";
                                     }
 
-//                                Upload Absensi masuk
-                                    kirimdata(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, mins, jamMasuk, rbValid, "100");
+                                    kirimDataMasuk(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, mins, jamMasuk, rbValid, "100");
 
                                 }
-
-                            }
 
                         }
                         else{
@@ -625,11 +621,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                                 rbKet = "kecepatan";
                             }
 
-                            if (statuskehadiran){
-
-                                if (tagingTime.getTime() < jamPulangDate.getTime()){
-                                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda ya.");
-                                }else{
 
                                     String eselon = "0";
                                     if (eJabatan.equals("2")){
@@ -644,18 +635,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                                         eselon = "2";
                                     }
                                     rbValid = "2";
-
-                                    if (!statuskehadiran){
-                                        viewBerakhlak("masukpulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid);
-                                    }
-                                    else{
-                                        viewBerakhlak("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid);
-                                    }
-                                }
-
-                            }else{
-                                dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Anda sudah mengisi absensi pulang.", "");
-                            }
+                                    viewBerakhlak("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid);
                         }
                     }
                 }
@@ -663,13 +643,13 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         }
     }
 
-    public void kirimdata(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status, String lat, String lng, String ket, int terlambat, String jampegawai, String validasi, String berakhlak){
+    public void kirimDataMasuk(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status, String lat, String lng, String ket, int terlambat, String jampegawai, String validasi, String berakhlak){
 
         Dialog dialogproses = new Dialog(AbsensiKehadiranActivity.this, R.style.DialogStyle);
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiran(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranMasuk(
                 encodedImage,
                 absensi,
                 eselon,
@@ -693,49 +673,125 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         call.enqueue(new Callback<ResponsePOJO>() {
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+                dialogproses.dismiss();
+
+                if (!response.isSuccessful()) {
+
+                    // --- PRINT STATUS CODE ---
+                    Log.e("ABSENSI_API_ERROR", "HTTP Code: " + response.code());
+
+                    // --- PRINT ERROR BODY ---
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                        Log.e("ABSENSI_API_ERROR", "Error Body: " + errorBody);
+                    } catch (Exception e) {
+                        Log.e("ABSENSI_API_ERROR", "Gagal membaca errorBody: " + e.getMessage());
+                    }
+
+                    // --- PRINT HEADERS ---
+                    Log.e("ABSENSI_API_ERROR", "Headers: " + response.headers().toString());
+
+                    // --- DEBUG URL YANG DIPANGGIL ---
+                    if (call.request() != null) {
+                        Log.e("ABSENSI_API_ERROR", "Request URL: " + call.request().url());
+                        Log.e("ABSENSI_API_ERROR", "Request Method: " + call.request().method());
+                        Log.e("ABSENSI_API_ERROR", "Request Body: " + call.request().body());
+                    }
+
+                    dialogproses.dismiss();
+                    dialogView.viewNotifKosong(
+                            AbsensiKehadiranActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
+                    return;
+                }
+
+//                if (!response.isSuccessful()) {
+//                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+//                    return;
+//                }
+
+                ResponsePOJO data = response.body();
+                if (data == null) {
+                    Log.e("ABSENSI_API_ERROR", "Response body null!");
+                    return;
+                }
+
+                Log.d("ABSENSI_API", "Status: " + data.isStatus());
+                Log.d("ABSENSI_API", "Remarks: " + data.getRemarks());
+                Log.d("ABSENSI_API", "Terlambat: " + data.getTerlambat());
+                Log.d("ABSENSI_API", "ID Absen: " + data.getIdAbsen());
+
+                // Contoh jika mau tampilkan sukses
+//                dialogView.viewNotifSukses(
+//                        AbsensiKehadiranActivity.this,
+//                        "Absensi Berhasil",
+//                        data.getRemarks() + "\nID: " + data.getIdAbsen()
+//                );
+//
+//                if (!response.isSuccessful()){
+//
+//                    dialogproses.dismiss();
+//                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+//                    return;
+//                }
+//
+//                Log.d("Response Status Normal", response.body().getRemarks());
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+
+                Log.e("ABSENSI_API_ERROR", "Gagal memanggil API absensi: " + t.getMessage(), t);
+                dialogproses.dismiss();
+
+                dialogView.pesanError(AbsensiKehadiranActivity.this);
+            }
+        });
+
+        dialogproses.show();
+    }
+
+    public void kirimDataPulang(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status, String lat, String lng, String ket, int terlambat, String jampegawai, String validasi, String berakhlak){
+
+        Dialog dialogproses = new Dialog(AbsensiKehadiranActivity.this, R.style.DialogStyle);
+        dialogproses.setContentView(R.layout.view_proses);
+        dialogproses.setCancelable(false);
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranPulang(
+                encodedImage,
+                absensi,
+                eselon,
+                idpegawai,
+                timetableid,
+                tanggal,
+                jam,
+                posisi,
+                status,
+                lat,
+                lng,
+                ket,
+                terlambat,
+                eOPD,
+                jampegawai,
+                validasi,
+                rbFakeGPS,
+                batasWaktu,
+                berakhlak
+        );
+        call.enqueue(new Callback<ResponsePOJO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+                dialogproses.dismiss();
 
                 if (!response.isSuccessful()){
-                    dialogproses.dismiss();
                     dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali  iii.");
                     return;
                 }
 
-                if(response.body().isStatus()){
-//                    Log.d("StatusKehadiran", absensi+" - "+statuskehadiran+" - "+sEmployId+" "+rbTanggal);
-
-                    if (statuskehadiran){
-                        if (Objects.equals(absensi, "pulang")) {
-//                            Log.d("StatusKehadiran", absensi+" - "+statuskehadiran+" - "+sEmployId+" "+rbTanggal);
-
-                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployId, rbTanggal, rbJam, posisi, status, lat, lng, ket);
-                            if (inserted) {
-                                dialogproses.dismiss();
-                                viewSukses(AbsensiKehadiranActivity.this);
-                            }
-                        }
-                    } else {
-//                        Log.d("StatusKehadiran", absensi+" - "+statuskehadiran+" - "+sEmployId+" "+rbTanggal);
-
-                        if (Objects.equals(absensi, "masuk")){
-                            boolean inserted = databaseHelper.insertPresence(sEmployId, rbTanggal, rbJam, posisi, status, lat, lng, ket);
-                            if (inserted) {
-                                dialogproses.dismiss();
-                                viewSukses(AbsensiKehadiranActivity.this);
-                            }
-                        } else if (Objects.equals(absensi, "masukpulang")) {
-                            boolean inserted = databaseHelper.insertPresencePulang(sEmployId, rbTanggal, rbJam, posisi, status, lat, lng, ket);
-                            if (inserted) {
-                                dialogproses.dismiss();
-                                viewSukses(AbsensiKehadiranActivity.this);
-                            }
-                        }
-                    }
-
-
-                }else{
-                    dialogproses.dismiss();
-                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, response.body().getRemarks(), "");
-                }
+                Log.d("Response Status Normal", response.body().getRemarks());
 
             }
 
@@ -1273,11 +1329,9 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
                     berakhlakDialog.dismiss();
 
-                    if (pulang.equals("masukpulang")){
-                        kirimdata("masukpulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid, berakhlak);
-                    } else if (pulang.equals("pulang")) {
-                        kirimdata("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid, berakhlak);
-                    }
+
+                    kirimDataPulang("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, rbStatus, rbLat, rbLng, rbKet, 0,  jamPulang, rbValid, berakhlak);
+
 
                 }
 
