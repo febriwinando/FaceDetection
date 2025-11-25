@@ -45,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // DATABASE CONFIGURATION
     // =========================
     public static final String NAMA_DATABASE = "absensitt.db";
-    private static final int DATABASE_VERSION = 100;
+    private static final int DATABASE_VERSION = 101;
 
     public DatabaseHelper(Context context) {
         super(context, NAMA_DATABASE, null, DATABASE_VERSION);
