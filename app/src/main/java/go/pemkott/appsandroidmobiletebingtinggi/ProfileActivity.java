@@ -262,7 +262,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     btnGantiPass.setVisibility(View.VISIBLE);
                                     pbGantiPass.setVisibility(View.GONE);
                                     dialogpassword.dismiss();
-                                    dialogView.viewSukses();
+//                                    dialogView.viewSukses(ProfileActivity.this,"");
                                 }else{
                                     btnGantiPass.setVisibility(View.VISIBLE);
                                     pbGantiPass.setVisibility(View.GONE);

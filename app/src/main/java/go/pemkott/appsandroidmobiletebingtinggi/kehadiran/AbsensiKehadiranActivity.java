@@ -193,21 +193,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivTaging.setImageBitmap(gambardeteksi);
-//        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
-//
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
-//        byte[] imageInByte = byteArrayOutputStream.toByteArray();
-//        encodedImage =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
-//        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
-//
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-//        // 50 = kompres optimal
-//        byte[] imageInByte = byteArrayOutputStream.toByteArray();
-//
-//        encodedImage = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-
 
         Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
@@ -216,10 +201,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
         encodedImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
 
-
-
         title_content.setText("KEHADIRAN");
-
 
         llUpload.setOnClickListener(view -> {
 
@@ -233,18 +215,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         });
 
         startLocationUpdates();
-
-//        boolean checkPresence = databaseHelper.checkPresenceByDate(sEmployId,rbTanggal);
-//
-//        if (checkPresence){
-//            statuskehadiran = true;
-//        }else{
-//            statuskehadiran = false;
-//        }
-
-
-//        Toast.makeText(mContext, ""+statuskehadiran, Toast.LENGTH_SHORT).show();
-
     }
 
     private void setRoundedBackground(FragmentContainerView view) {
@@ -694,28 +664,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
                 if (!response.isSuccessful()) {
 
-                    // --- PRINT STATUS CODE ---
-                    Log.e("ABSENSI_API_ERROR", "HTTP Code: " + response.code());
-
-                    // --- PRINT ERROR BODY ---
-                    try {
-                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
-                        Log.e("ABSENSI_API_ERROR", "Error Body: " + errorBody);
-                    } catch (Exception e) {
-                        Log.e("ABSENSI_API_ERROR", "Gagal membaca errorBody: " + e.getMessage());
-                    }
-
-                    // --- PRINT HEADERS ---
-                    Log.e("ABSENSI_API_ERROR", "Headers: " + response.headers().toString());
-
-                    // --- DEBUG URL YANG DIPANGGIL ---
-                    if (call.request() != null) {
-                        Log.e("ABSENSI_API_ERROR", "Request URL: " + call.request().url());
-                        Log.e("ABSENSI_API_ERROR", "Request Method: " + call.request().method());
-                        Log.e("ABSENSI_API_ERROR", "Request Body: " + call.request().body());
-                    }
-
-                    dialogproses.dismiss();
                     dialogView.viewNotifKosong(
                             AbsensiKehadiranActivity.this,
                             "Gagal mengisi absensi",
@@ -724,37 +672,13 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
                     return;
                 }
 
-//                if (!response.isSuccessful()) {
-//                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
-//                    return;
-//                }
-
                 ResponsePOJO data = response.body();
-                if (data == null) {
-                    Log.e("ABSENSI_API_ERROR", "Response body null!");
-                    return;
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(AbsensiKehadiranActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, data.getRemarks(),"");
                 }
-
-                Log.d("ABSENSI_API", "Status: " + data.isStatus());
-                Log.d("ABSENSI_API", "Remarks: " + data.getRemarks());
-                Log.d("ABSENSI_API", "Terlambat: " + data.getTerlambat());
-                Log.d("ABSENSI_API", "ID Absen: " + data.getIdAbsen());
-
-                // Contoh jika mau tampilkan sukses
-//                dialogView.viewNotifSukses(
-//                        AbsensiKehadiranActivity.this,
-//                        "Absensi Berhasil",
-//                        data.getRemarks() + "\nID: " + data.getIdAbsen()
-//                );
-//
-//                if (!response.isSuccessful()){
-//
-//                    dialogproses.dismiss();
-//                    dialogView.viewNotifKosong(AbsensiKehadiranActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
-//                    return;
-//                }
-//
-//                Log.d("Response Status Normal", response.body().getRemarks());
 
             }
 

@@ -1,5 +1,6 @@
 package go.pemkott.appsandroidmobiletebingtinggi.dialogview;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -40,25 +41,23 @@ public class DialogView {
         dataKosong.show();
     }
 
-    public int viewSukses(){
+    public void viewSukses(Activity activity, String info){
         Dialog dialogSukes = new Dialog(context, R.style.DialogStyle);
         dialogSukes.setContentView(R.layout.view_sukses);
         dialogSukes.setCancelable(true);
-        ImageView tvTutupDialog = dialogSukes.findViewById(R.id.tvTutupDialog);
-
-        final int[] tutup = {0};
+        ImageView tvTutupDialog = dialogSukes.findViewById(R.id.ivTutupDialogBerhasil);
+        TextView tvSukseKeterangan = dialogSukes.findViewById(R.id.tvSukseKeterangan);
+        tvSukseKeterangan.setText(info);
 
         tvTutupDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tutup[0] = 1;
                 dialogSukes.dismiss();
+                activity.finish();
             }
         });
 
         dialogSukes.show();
-        return tutup[0];
-
     }
 
     public void viewFoto(Bitmap data){
