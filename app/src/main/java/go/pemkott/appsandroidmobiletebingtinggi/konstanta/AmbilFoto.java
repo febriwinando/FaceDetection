@@ -14,6 +14,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -187,64 +188,141 @@ public class AmbilFoto {
 
     public Bitmap fileBitmapCompress(File file){
 
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inJustDecodeBounds = true;
 
+        BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
 
-        if (getFileExt(file.getName()).equals("png") || getFileExt(file.getName()).equals("PNG")) {
-            o.inSampleSize = 2;
-        } else {
-            if (Build.VERSION.SDK_INT > 27){
-                o.inSampleSize = 2;
-            }else{
-                o.inSampleSize = 2;
-            }
-        }
-
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        BitmapFactory.decodeStream(inputStream, null, o);
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 70;
-
-        // Find the correct scale value. It should be the power of 2.
+        // TARGET resolusi setelah diperkecil
+        final int REQUIRED_SIZE = 800;  // Kompres optimal
         int scale = 1;
-        if (Build.VERSION.SDK_INT > 27){
-            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-        }else{
-            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 1;
-            }
+
+        while (opts.outWidth / scale >= REQUIRED_SIZE &&
+                opts.outHeight / scale >= REQUIRED_SIZE) {
+            scale *= 2;
         }
 
+        // Decode ulang dengan scale
+        BitmapFactory.Options opts2 = new BitmapFactory.Options();
+        opts2.inSampleSize = scale;
 
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        try {
-            inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
-
-        return selectedBitmap;
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), opts2);
     }
+
+    public Bitmap compressBitmapTo80KB(File file) {
+
+        // 1. Decode awal dengan resolusi besar dulu
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        int REQUIRED_SIZE = 800; // awal, nanti turun jika masih besar
+        int scale = 1;
+
+        while ((options.outWidth / scale) >= REQUIRED_SIZE &&
+                (options.outHeight / scale) >= REQUIRED_SIZE) {
+            scale *= 2;
+        }
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scale;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+
+
+        // 2. Ulangi kompres sampai hasil ≤ 80 KB
+        int quality = 90;  // mulai dari kualitas bagus dulu
+
+        while (true) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream);
+
+            int sizeKB = stream.toByteArray().length / 1024;
+
+            if (sizeKB <= 80) {
+                break; // ukuran sudah pas
+            }
+
+            // kalau masih besar → turunkan kualitas
+            quality -= 5;
+
+            // kalau kualitas sudah kecil tapi ukuran masih besar → turunkan resolusi
+            if (quality < 20) {
+                REQUIRED_SIZE -= 100; // kurangi resolusi
+                scale += 1;
+
+                BitmapFactory.Options opt2 = new BitmapFactory.Options();
+                opt2.inSampleSize = scale;
+                bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), opt2);
+
+                quality = 90; // reset kualitas
+            }
+        }
+
+        return bitmap;
+    }
+
+//    public Bitmap fileBitmapCompress(File file){
+//
+//        BitmapFactory.Options o = new BitmapFactory.Options();
+//        o.inJustDecodeBounds = true;
+//
+//
+//        if (getFileExt(file.getName()).equals("png") || getFileExt(file.getName()).equals("PNG")) {
+//            o.inSampleSize = 2;
+//        } else {
+//            if (Build.VERSION.SDK_INT > 27){
+//                o.inSampleSize = 2;
+//            }else{
+//                o.inSampleSize = 2;
+//            }
+//        }
+//
+//        FileInputStream inputStream = null;
+//        try {
+//            inputStream = new FileInputStream(file);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        BitmapFactory.decodeStream(inputStream, null, o);
+//        try {
+//            inputStream.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        // The new size we want to scale to
+//        final int REQUIRED_SIZE = 70;
+//
+//        // Find the correct scale value. It should be the power of 2.
+//        int scale = 1;
+//        if (Build.VERSION.SDK_INT > 27){
+//            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+//                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+//                scale *= 2;
+//            }
+//        }else{
+//            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+//                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+//                scale *= 1;
+//            }
+//        }
+//
+//
+//        BitmapFactory.Options o2 = new BitmapFactory.Options();
+//        o2.inSampleSize = scale;
+//        try {
+//            inputStream = new FileInputStream(file);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
+//
+//        return selectedBitmap;
+//    }
 
     public String getPDFPath(Uri uri, Context context, String idE, String time){
         String absolutePath = "";

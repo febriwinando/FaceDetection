@@ -193,12 +193,29 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivTaging.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+//        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+//
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+//        byte[] imageInByte = byteArrayOutputStream.toByteArray();
+//        encodedImage =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
+//        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+//
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+//        // 50 = kompres optimal
+//        byte[] imageInByte = byteArrayOutputStream.toByteArray();
+//
+//        encodedImage = Base64.encodeToString(imageInByte, Base64.DEFAULT);
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
-        byte[] imageInByte = byteArrayOutputStream.toByteArray();
-        encodedImage =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
+
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+
+        encodedImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+
 
 
         title_content.setText("KEHADIRAN");
@@ -755,7 +772,7 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
     }
 
     public void kirimDataPulang(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status, String lat, String lng, String ket, int terlambat, String jampegawai, String validasi, String berakhlak){
-
+        Log.d("Response Status Normal", "Mulai");
         Dialog dialogproses = new Dialog(AbsensiKehadiranActivity.this, R.style.DialogStyle);
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
@@ -797,9 +814,8 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
 
             @Override
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
-                Log.e("ABSENSI_API_ERROR", "Gagal memanggil API absensi: " + t.getMessage(), t);
+                Log.e("Response Status Normal", "Gagal memanggil API absensi: " + t.getMessage(), t);
                 dialogproses.dismiss();
-
                 dialogView.pesanError(AbsensiKehadiranActivity.this);
             }
         });
