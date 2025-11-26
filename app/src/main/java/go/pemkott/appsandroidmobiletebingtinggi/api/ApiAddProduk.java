@@ -114,25 +114,50 @@ public interface ApiAddProduk {
     );
 
     @FormUrlEncoded
-    @POST("dinasluarkantornew")
-    Call<ResponsePOJO> uploadAbsenKehadiranDinasLuar(
+    @POST("tl/masuk")
+    Call<ResponsePOJO> uploadTLMasuk(
             @Field("fototaging") String encodedImage,
             @Field("absensi") String absensi,
             @Field("eselon") String eselon,
             @Field("employee_id") String id,
             @Field("timetable_id") String time,
             @Field("tanggal") String tanggal,
-            @Field("jam_masuk") String jammasuk,
-            @Field("posisi_masuk") String posisimasuk,
-            @Field("status_masuk") String statusmasuk,
-            @Field("lat_masuk") String latmasuk,
-            @Field("lng_masuk") String lngmasuk,
-            @Field("ket_masuk") String ketmasuk,
+            @Field("jam_masuk") String jam_masuk,
+            @Field("posisi_masuk") String posisi_masuk,
+            @Field("status_masuk") String status_masuk,
+            @Field("lat_masuk") String lat_masuk,
+            @Field("lng_masuk") String lng_masuk,
+            @Field("ket_masuk") String ket_masuk,
             @Field("terlambat") int terlambat,
             @Field("opd") String opd,
-            @Field("jam_kantor") String jamkantor,
-            @Field("valid_masuk") String validasi,
-            @Field("lampiran") String lampiran,
+            @Field("jam_kantor") String jam_kantor,
+            @Field("valid_masuk") String valid_masuk,
+            @Field("lampiran_masuk") String lampiran_masuk,
+            @Field("ekslampiran") String ekslampiran,
+            @Field("fakegps") String fakegps,
+            @Field("batas_waktu") String bataswaktu
+    );
+
+    @FormUrlEncoded
+    @POST("tl/pulang")
+    Call<ResponsePOJO> uploadTLPulang(
+            @Field("fototaging") String encodedImage,
+            @Field("absensi") String absensi,
+            @Field("eselon") String eselon,
+            @Field("employee_id") String id,
+            @Field("timetable_id") String time,
+            @Field("tanggal") String tanggal,
+            @Field("jam_pulang") String jam_pulang,
+            @Field("posisi_pulang") String posisi_pulang,
+            @Field("status_pulang") String status_pulang,
+            @Field("lat_pulang") String lat_pulang,
+            @Field("lng_pulang") String lng_pulang,
+            @Field("ket_pulang") String ket_pulang,
+            @Field("kecepatan") int kecepatan,
+            @Field("opd") String opd,
+            @Field("jam_kantor") String jam_kantor,
+            @Field("valid_pulang") String valid_pulang,
+            @Field("lampiran_pulang") String lampiran_pulang,
             @Field("ekslampiran") String ekslampiran,
             @Field("fakegps") String fakegps,
             @Field("batas_waktu") String bataswaktu

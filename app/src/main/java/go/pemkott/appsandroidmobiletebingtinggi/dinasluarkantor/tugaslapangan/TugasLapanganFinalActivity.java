@@ -372,37 +372,19 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                 if (radioSelectedKehadiran.getText().toString().trim().equals("MASUK")){
 
                     rbPosisi = "tl-masuk";
-//                    if (!statuskehadiran){
 
-                        if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
-                            showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
-                        }else{
-                            kirimdata(rbValid, rbPosisi, rbStatus, "masuk", jamMasuk);
-                        }
+                    if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
+                        showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
+                    }else{
+                        kirimdataMasuk(rbValid, rbPosisi, rbStatus, "masuk", jamMasuk);
+                    }
 
-//                    }else{
-//
-//                        showMessage("Peringatan", "Anda sudah mengisi absensi masuk.");
-//
-//                    }
 
                 } else if(radioSelectedKehadiran.getText().toString().trim().equals("PULANG")) {
 
                     rbPosisi = "tl-pulang";
-//                    if (statuskehadiran){
-//                        if (tagingTimePeriksa.getTime() < pulangPeriksa.getTime() ){
-//                            showMessage("Peringatan", "Anda belum dapat mengisi absensi pulang.");
-//                        }else{
-//                            if(!statuskehadiran){
-//                                kirimdata(rbValid, rbPosisi, rbStatus, "masukpulang", jamPulang);
-//                            }else{
-                                kirimdata(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
-//                            }
-//
-//                        }
-//                    }else{
-//                        showMessage("Peringatan", "Anda sudah mengisi absensi pulang.");
-//                    }
+
+                    kirimdataPulang(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
 
                 }
             }
@@ -441,13 +423,13 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         });
     }
 
-    public void kirimdata(String valid, String posisi, String status, String ketKehadiran, String jampegawai){
+    public void kirimdataMasuk(String valid, String posisi, String status, String ketKehadiran, String jampegawai){
         progressDialog = new ProgressDialog(TugasLapanganFinalActivity.this, R.style.AppCompatAlertDialogStyle);
         progressDialog.setMessage("Sedang memproses...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranDinasLuar(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadTLMasuk(
                 fotoTaging,
                 ketKehadiran,
                 eJabatan,
@@ -474,43 +456,24 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
                 progressDialog.dismiss();
-                if (!response.isSuccessful()){
-                    dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            TugasLapanganFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
                     return;
                 }
-                assert response.body() != null;
-                Log.d("Response Status Tugas Lapangan", response.body().getRemarks());
-//                if(response.body().isStatus()) {
-//
-//                }
-//                    if (statuskehadiran){
-//                        if (Objects.equals(ketKehadiran, "pulang")) {
-//                            boolean inserted = databaseHelper.updatePresenceByIdAndDate(sEmployeID, rbTanggal, rbJam, posisi, status, rbLat, rbLng, rbKet);
-//                            if (inserted) {
-//                                progressDialog.dismiss();
-//                                viewSukses(TugasLapanganFinalActivity.this);
-//                            }
-//                        }
-//                    } else {
-//                        if (Objects.equals(ketKehadiran, "masuk")){
-//
-//                            boolean inserted = databaseHelper.insertPresence(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
-//                            if (inserted) {
-//                                progressDialog.dismiss();
-//                                viewSukses(TugasLapanganFinalActivity.this);
-//                            }
-//                        } else if (Objects.equals(ketKehadiran, "masukpulang")) {
-//                            boolean inserted = databaseHelper.insertPresencePulang(sEmployeID, rbTanggal, rbJam, posisi,status,rbLat,rbLng,rbKet);
-//                            if (inserted) {
-//                                progressDialog.dismiss();
-//                                viewSukses(TugasLapanganFinalActivity.this);
-//                            }
-//                        }
-//                    }
 
-//                }else{
-//                    dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, response.body().getRemarks(), "");
-//                }
+                ResponsePOJO data = response.body();
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(TugasLapanganFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, data.getRemarks(),"");
+                }
+
 
             }
 
@@ -523,6 +486,68 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         });
     }
 
+    public void kirimdataPulang(String valid, String posisi, String status, String ketKehadiran, String jampegawai){
+        progressDialog = new ProgressDialog(TugasLapanganFinalActivity.this, R.style.AppCompatAlertDialogStyle);
+        progressDialog.setMessage("Sedang memproses...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadTLPulang(
+                fotoTaging,
+                ketKehadiran,
+                eJabatan,
+                sEmployeID,
+                timetableid,
+                rbTanggal,
+                rbJam,
+                posisi,
+                status,
+                rbLat,
+                rbLng,
+                rbKet,
+                mins,
+                eOPD,
+                jampegawai,
+                valid,
+                lampiran,
+                ekslampiran,
+                rbFakeGPS,
+                batasWaktu
+        );
+
+        call.enqueue(new Callback<ResponsePOJO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+                progressDialog.dismiss();
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            TugasLapanganFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
+                    return;
+                }
+
+                ResponsePOJO data = response.body();
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(TugasLapanganFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(TugasLapanganFinalActivity.this, data.getRemarks(),"");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
+                dialogView.pesanError(TugasLapanganFinalActivity.this);
+
+            }
+        });
+    }
 
     public void hitungjarak(){
 
@@ -739,11 +764,8 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                 iconLampiran.setVisibility(View.GONE);
 
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file);
-
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath, 0), true);
-
-
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
 
 
