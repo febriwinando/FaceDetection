@@ -523,6 +523,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         call.enqueue(new Callback<ResponsePOJO>() {
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+                Log.d("Absen TL", ekslampiran);
                 progressDialog.dismiss();
                 if (!response.isSuccessful()) {
 
