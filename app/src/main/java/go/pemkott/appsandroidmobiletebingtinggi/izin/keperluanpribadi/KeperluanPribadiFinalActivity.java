@@ -349,7 +349,7 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranDinasLuar(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadTLMasuk(
                 fotoTaging,
                 ketKehadiran,
                 eJabatan,

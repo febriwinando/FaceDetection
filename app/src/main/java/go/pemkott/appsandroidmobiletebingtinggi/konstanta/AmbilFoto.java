@@ -216,7 +216,7 @@ public class AmbilFoto {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
-        int REQUIRED_SIZE = 800; // awal, nanti turun jika masih besar
+        int REQUIRED_SIZE = 500; // awal, nanti turun jika masih besar
         int scale = 1;
 
         while ((options.outWidth / scale) >= REQUIRED_SIZE &&
@@ -232,7 +232,7 @@ public class AmbilFoto {
 
 
         // 2. Ulangi kompres sampai hasil ≤ 80 KB
-        int quality = 90;  // mulai dari kualitas bagus dulu
+        int quality = 60;  // mulai dari kualitas bagus dulu
 
         while (true) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -240,7 +240,7 @@ public class AmbilFoto {
 
             int sizeKB = stream.toByteArray().length / 1024;
 
-            if (sizeKB <= 80) {
+            if (sizeKB <= 50) {
                 break; // ukuran sudah pas
             }
 
@@ -256,7 +256,7 @@ public class AmbilFoto {
                 opt2.inSampleSize = scale;
                 bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), opt2);
 
-                quality = 90; // reset kualitas
+                quality = 60; // reset kualitas
             }
         }
 

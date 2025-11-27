@@ -242,10 +242,10 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivFinalKegiatan.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
         byte[] imageInByte = byteArrayOutputStream.toByteArray();
         fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -429,6 +429,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
         progressDialog.setCancelable(false);
         progressDialog.show();
 
+        Log.d("Absensi TL Log", "dimulai");
         Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadTLMasuk(
                 fotoTaging,
                 ketKehadiran,
@@ -466,6 +467,8 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                     return;
                 }
 
+                Log.d("Absensi TL Log", "merespon");
+
                 ResponsePOJO data = response.body();
 
                 if (Objects.requireNonNull(response.body()).isStatus()){
@@ -480,6 +483,8 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
             @Override
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
+                Log.d("Absensi TL Log", "gagal: "+t.getMessage());
+
                 dialogView.pesanError(TugasLapanganFinalActivity.this);
 
             }
@@ -544,6 +549,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
                 dialogView.pesanError(TugasLapanganFinalActivity.this);
+
 
             }
         });
@@ -743,13 +749,13 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
                 ivFinalKegiatan.setVisibility(View.VISIBLE);
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFoto.fileBitmap(file);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
                 rotationBitmapTag = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath, 0), true);
 
                 ivFinalKegiatan.setImageBitmap(rotationBitmapTag);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapTag.compress(Bitmap.CompressFormat.JPEG,50, byteArrayOutputStream);
+                rotationBitmapTag.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -770,7 +776,7 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
 
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -790,13 +796,13 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                 String FilePath2  = getDriveFilePath(selectedImageUri, TugasLapanganFinalActivity.this);
 
                 File file1 = new File(FilePath2);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file1);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file1);
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(FilePath2, 0), true);
 
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -826,9 +832,9 @@ public class TugasLapanganFinalActivity extends AppCompatActivity implements OnM
                 File filelampiran = new File(myDir, fotoFileLampiran);
                 Bitmap gambarLampiran = BitmapFactory.decodeFile(filelampiran.getAbsolutePath());
                 ivSuratPerintahFinal.setImageBitmap(gambarLampiran);
-                Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(filelampiran);
+                Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(filelampiran);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+                selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
