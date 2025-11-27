@@ -98,7 +98,9 @@ import go.pemkott.appsandroidmobiletebingtinggi.api.ResponsePOJO;
 import go.pemkott.appsandroidmobiletebingtinggi.api.RetroClient;
 import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
+import go.pemkott.appsandroidmobiletebingtinggi.izin.keperluanpribadi.KeperluanPribadiFinalActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.kameralampiran.CameraLampiranActivity;
+import go.pemkott.appsandroidmobiletebingtinggi.kehadiran.AbsensiKehadiranActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFotoLampiran;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.Lokasi;
@@ -243,10 +245,10 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivFinalKegiatan.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
         byte[] imageInByte = byteArrayOutputStream.toByteArray();
         fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -525,12 +527,12 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 iconLampiran.setVisibility(View.GONE);
 
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
 
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath, 0), true);
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -553,13 +555,13 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 String FilePath2  = getDriveFilePath(selectedImageUri, PerjalananDinasFinalActivity.this);
 
                 File file1 = new File(FilePath2);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file1);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file1);
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(FilePath2, 0), true);
 
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -590,9 +592,9 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 File filelampiran = new File(myDir, fotoFileLampiran);
                 Bitmap gambarLampiran = BitmapFactory.decodeFile(filelampiran.getAbsolutePath());
                 ivSuratPerintahFinal.setImageBitmap(gambarLampiran);
-                Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(filelampiran);
+                Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(filelampiran);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+                selectedBitmap.compress(Bitmap.CompressFormat.PNG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -791,7 +793,6 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 eJabatan,
                 sEmployeID,
                 timetableid,
-                rbTanggal,
                 rbJam,
                 posisi,
                 status,
@@ -808,41 +809,28 @@ public class PerjalananDinasFinalActivity extends AppCompatActivity implements O
                 rbFakeGPS
         );
 
-
-
         call.enqueue(new Callback<ResponsePOJO>() {
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
-                if (!response.isSuccessful()){
-                    dialogproses.dismiss();
-                    dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
-                    return;
+                dialogproses.dismiss();
 
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            PerjalananDinasFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
+                    return;
                 }
 
+                ResponsePOJO data = response.body();
 
-                Log.d("Response Status Perjalanan Dinas" , response.body().getRemarks());
-//                if(Objects.requireNonNull(response.body()).isStatus()){
-//                    boolean result = databaseHelper.insertOrUpdatePresenceRange(
-//                            sEmployeID,
-//                            dariTanggal,
-//                            sampaiTanggal,
-//                            rbJam,
-//                            rbJam,
-//                            rbLat,
-//                            rbLng,
-//                            rbKet
-//                    );
-//
-//                    if (result) {
-//                        dialogproses.dismiss();
-//                        viewSukses(PerjalananDinasFinalActivity.this);
-//                    }
-//
-//                }else{
-//                    dialogproses.dismiss();
-//                    dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, response.body().getRemarks(), "");
-//                }
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(PerjalananDinasFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(PerjalananDinasFinalActivity.this, data.getRemarks(),"");
+                }
 
             }
 

@@ -244,13 +244,12 @@ public interface ApiAddProduk {
 
 
     @FormUrlEncoded
-    @POST("absensiperjalanandinasnew")
+    @POST("perjalanandinas")
     Call<ResponsePOJO> uploadAbsenPerjalananDinas(
             @Field("fototaging") String encodedImage,
             @Field("eselon") String eselon,
             @Field("employee_id") String id,
             @Field("timetable_id") String time,
-            @Field("tanggal") String tanggal,
             @Field("jam_masuk") String jammasuk,
             @Field("posisi_masuk") String posisimasuk,
             @Field("status_masuk") String statusmasuk,
