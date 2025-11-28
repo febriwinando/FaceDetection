@@ -93,6 +93,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import go.pemkott.appsandroidmobiletebingtinggi.R;
 import go.pemkott.appsandroidmobiletebingtinggi.api.ResponsePOJO;
@@ -400,33 +401,24 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
                 progressDialog.dismiss();
 
-                if (!response.isSuccessful()){
+                if (!response.isSuccessful()) {
 
-                    dialogView.viewNotifKosong(IzinCutiFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+
+                    dialogView.viewNotifKosong(
+                            IzinCutiFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali ya."
+                    );
                     return;
                 }
 
-                Log.d("Response Status Izin Cuti", response.body().getRemarks());
+                ResponsePOJO data = response.body();
 
-//                if(response.body().isStatus()){
-//                    boolean result = databaseHelper.insertCutitoPresences(
-//                            sEmployeID,
-//                            dariTanggal,
-//                            sampaiTanggal,
-//                            "",
-//                            "",
-//                            rbLat,
-//                            rbLng,
-//                            rbKet
-//                    );
-//
-//                    if (result) {
-//                        progressDialog.dismiss();
-//                        viewSukses(IzinCutiFinalActivity.this);
-//                    }
-//                }else{
-//                    dialogView.viewNotifKosong(IzinCutiFinalActivity.this, response.body().getRemarks(), "");
-//                }
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(IzinCutiFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(IzinCutiFinalActivity.this, data.getRemarks(),"");
+                }
 
             }
 

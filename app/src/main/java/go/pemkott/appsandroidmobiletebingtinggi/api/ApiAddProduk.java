@@ -269,21 +269,19 @@ public interface ApiAddProduk {
     @FormUrlEncoded
     @POST("izin/cuti")
     Call<ResponsePOJO> uploadAbsenIzinCuti(
-
-            @Field("fototaging") String encodedImage,
-            @Field("employee_id") String id,
-            @Field("posisi_masuk") String posisimasuk,
-            @Field("status_masuk") String statusmasuk,
-            @Field("lat_masuk") String latmasuk,
-            @Field("lng_masuk") String lngmasuk,
-            @Field("ket_masuk") String ketmasuk,
-            @Field("valid_masuk") String validasi,
+            @Field("fototaging") String fototaging,
+            @Field("employee_id") String employee_id,
+            @Field("posisi_masuk") String posisi_masuk,
+            @Field("status_masuk") String status_masuk,
+            @Field("lat_masuk") String lat_masuk,
+            @Field("lng_masuk") String lng_masuk,
+            @Field("ket_masuk") String ket_masuk,
+            @Field("valid_masuk") String valid_masuk,
             @Field("lampiran") String lampiran,
             @Field("ekslampiran") String ekslampiran,
-            @Field("mulai") String dari,
+            @Field("mulai") String mulai,
             @Field("sampai") String sampai,
             @Field("fakegps") String fakegps
-
     );
 
     @FormUrlEncoded
