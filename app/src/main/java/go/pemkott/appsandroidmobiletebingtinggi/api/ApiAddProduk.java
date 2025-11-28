@@ -267,7 +267,7 @@ public interface ApiAddProduk {
     );
 
     @FormUrlEncoded
-    @POST("absensiizincuti")
+    @POST("izin/cuti")
     Call<ResponsePOJO> uploadAbsenIzinCuti(
 
             @Field("fototaging") String encodedImage,

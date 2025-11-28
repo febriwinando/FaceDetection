@@ -245,10 +245,10 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivFinalKegiatan.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
         byte[] imageInByte = byteArrayOutputStream.toByteArray();
         fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -350,7 +350,8 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
         }
 
         if (dariTanggal == null || sampaiTanggal == null){
-            dialogView.viewNotifKosong(IzinCutiFinalActivity.this, "Rentang waktu Perjalanan Dinas tidak boleh kosong.", "");
+            dialogView.viewNotifKosong(IzinCutiFinalActivity.this, "Rentang waktu masa cuti tidak boleh kosong.", "");
+
         }
         else{
 
@@ -362,31 +363,13 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                 e.printStackTrace();
             }
 
-            if (jam_masuk != null){
 
-                if (jam_pulang != null){
-                    kirimdata(rbValid, rbPosisi, rbStatus);
-
-                }else {
-                    if (dateDariTgl.getTime() > dateSampaiTgl.getTime()){
-                        dialogView.viewNotifKosong(this, "Perhatikan kembali rentang waktu yang anda pilih.", "Tidak boleh terbalik.");
-                    }else{
-                        kirimdata(rbValid, rbPosisi, rbStatus);
-                    }
-                }
-
-            }else if(jam_masuk == null && jam_pulang == null){
-
-                if (dateDariTgl.getTime() > dateSampaiTgl.getTime()){
-                    dialogView.viewNotifKosong(this, "Perhatikan kembali rentang waktu yang anda pilih.", "Tidak boleh terbalik.");
-                }else{
-                    kirimdata(rbValid, rbPosisi, rbStatus);
-
-                }
-
+            if (dateDariTgl.getTime() > dateSampaiTgl.getTime()){
+                dialogView.viewNotifKosong(this, "Perhatikan kembali rentang waktu yang anda pilih.", "Tidak boleh terbalik.");
+            }else{
+                kirimdata(rbValid, rbPosisi, rbStatus);
             }
         }
-
     }
 
     public void kirimdata(String valid, String posisi, String status){
@@ -610,41 +593,6 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
     static final int REQUEST_CODE_LAMPIRAN = 341;
     String fotoFileLampiran;
 
-    private void ambilFoto(String addFoto){
-        String filename = "photo";
-        File storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        try {
-            imageFile = File.createTempFile(filename, ".png", storageDirectory);
-            currentPhotoPath = null;
-            currentPhotoPath = imageFile.getAbsolutePath();
-            Uri imageUri = FileProvider.getUriForFile(IzinCutiFinalActivity.this, "go.pemkott.appsandroidmobiletebingtinggi.fileprovider", imageFile);
-            if (addFoto.equals("kegiatan")){
-//                hitungjarak();
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, 1);
-                progressDialog = new ProgressDialog(IzinCutiFinalActivity.this, R.style.AppCompatAlertDialogStyle);
-                progressDialog.setMessage("Sedang memproses...");
-                progressDialog.show();
-
-            }else{
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, 2);
-                progressDialog = new ProgressDialog(IzinCutiFinalActivity.this, R.style.AppCompatAlertDialogStyle);
-                progressDialog.setMessage("Sedang memproses...");
-                progressDialog.show();
-
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -678,12 +626,12 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                 llPdfDinasLuar.setVisibility(View.GONE);
                 iconLampiran.setVisibility(View.GONE);
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath, 0), true);
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -703,13 +651,13 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                 String FilePath2  = getDriveFilePath(selectedImageUri, IzinCutiFinalActivity.this);
 
                 File file1 = new File(FilePath2);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file1);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file1);
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(FilePath2, 0), true);
 
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -741,9 +689,9 @@ public class IzinCutiFinalActivity extends AppCompatActivity implements OnMapRea
                 File filelampiran = new File(myDir, fotoFileLampiran);
                 Bitmap gambarLampiran = BitmapFactory.decodeFile(filelampiran.getAbsolutePath());
                 ivSuratPerintahFinal.setImageBitmap(gambarLampiran);
-                Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(filelampiran);
+                Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(filelampiran);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+                selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
