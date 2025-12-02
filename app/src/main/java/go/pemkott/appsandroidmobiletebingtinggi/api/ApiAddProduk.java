@@ -256,7 +256,7 @@ public interface ApiAddProduk {
             @Field("opd") String opd,
             @Field("jam_kantor") String jamkantor,
             @Field("valid_masuk") String valid_masuk,
-            @Field("lampiran") String lampiran,
+            @Field("lampiran_masuk") String lampiran_masuk,
             @Field("ekslampiran") String ekslampiran,
             @Field("fakegps") String fakegps
     );
@@ -271,8 +271,7 @@ public interface ApiAddProduk {
             @Field("employee_id") String employee_id,
             @Field("timetable_id") String timetable_id,
             @Field("tanggal") String tanggal,
-            @Field("jam_pulang") String jam_pulang
-            ,
+            @Field("jam_pulang") String jam_pulang,
             @Field("posisi_pulang") String posisi_pulang,
             @Field("status_pulang") String status_pulang,
             @Field("lat_pulang") String lat_pulang,
@@ -282,7 +281,7 @@ public interface ApiAddProduk {
             @Field("opd") String opd,
             @Field("jam_kantor") String jamkantor,
             @Field("valid_pulang") String valid_pulang,
-            @Field("lampiran") String lampiran,
+            @Field("lampiran_pulang") String lampiran_pulang,
             @Field("ekslampiran") String ekslampiran,
             @Field("fakegps") String fakegps
     );

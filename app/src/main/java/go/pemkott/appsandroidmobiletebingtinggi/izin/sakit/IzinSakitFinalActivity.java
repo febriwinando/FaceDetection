@@ -412,10 +412,6 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
                 e.printStackTrace();
             }
 
-//            if (tagingTimePeriksa.getTime() < dateBatasWaktu.getTime()){
-//                dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Anda hanya dapat mengisi absen masuk, "+batasWaktu+" menit sebelum Jam Masuk", "");
-//            }else{
-
             if (radioSelectedKehadiran.getText().toString().equals("MASUK")){
 
                 assert tagingTimePeriksa != null;
