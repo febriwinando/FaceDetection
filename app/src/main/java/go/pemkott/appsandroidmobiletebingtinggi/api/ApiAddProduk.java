@@ -166,7 +166,7 @@ public interface ApiAddProduk {
     @FormUrlEncoded
     @POST("izin/pribadi/pulang")
     Call<ResponsePOJO> uploadIzinKpPulang(
-            @Field("photo_tagging_pulang") String fototaging,
+            @Field("fototaging") String fototaging,
             @Field("absensi") String absensi,
             @Field("eselon") String eselon,
             @Field("employee_id") String employee_id,
