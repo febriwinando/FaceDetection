@@ -255,10 +255,10 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivFinalKegiatan.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
         byte[] imageInByte = byteArrayOutputStream.toByteArray();
         fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -417,48 +417,90 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
 //            }else{
 
             if (radioSelectedKehadiran.getText().toString().equals("MASUK")){
-                if (jam_masuk == null){
 
-                    assert tagingTimePeriksa != null;
-                    assert pulangPeriksa != null;
-                    if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
-                        showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
-                    }else{
-                        kirimdata(rbValid,  rbStatus, "masuk", jamMasuk);
-                    }
-
+                assert tagingTimePeriksa != null;
+                assert pulangPeriksa != null;
+                if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
+                    showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
                 }else{
-
-                    showMessage("Peringatan", "Anda sudah mengisi absensi masuk.");
-
+                    kirimdataMasuk(rbValid,  rbStatus, "masuk", jamMasuk);
                 }
+
             }
             else {
-                if (jam_pulang == null){
 
-                    if(jam_masuk == null ){
-                        kirimdata(rbValid, rbStatus, "masukpulang", jamPulang);
-                    }else{
-                        kirimdata(rbValid, rbStatus, "pulang", jamPulang);
-                    }
+                kirimdataPulang(rbValid, rbStatus, "pulang", jamPulang);
 
-                }else{
-                    showMessage("Peringatan", "Anda sudah mengisi absensi pulang.");
-                }
             }
 //            }
         }
     }
 
 
-    public void kirimdata(String valid, String status, String ketKehadiran, String jampegawai){
+    public void kirimdataMasuk(String valid, String status, String ketKehadiran, String jampegawai){
 
         progressDialog = new ProgressDialog(IzinSakitFinalActivity.this, R.style.AppCompatAlertDialogStyle);
         progressDialog.setMessage("Sedang memproses...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadizinsakit(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadizinsakitmasuk(
+                fotoTaging,
+                ketKehadiran,
+                eJabatan,
+                sEmployeID,
+                timetableid,
+                rbTanggal,
+                rbJam,
+                "sk",
+                status,
+                rbLat,
+                rbLng,
+                rbKet,
+                mins,
+                eOPD,
+                jampegawai,
+                valid,
+                lampiran,
+                ekslampiran,
+                rbFakeGPS
+        );
+
+        call.enqueue(new Callback<ResponsePOJO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+                progressDialog.dismiss();
+                if (!response.isSuccessful()){
+                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                    return;
+                }
+
+                assert response.body() != null;
+                if(response.body().isStatus()){
+                    viewSukses(IzinSakitFinalActivity.this);
+                }else{
+                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, response.body().getRemarks(), "");
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
+                dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+            }
+        });
+    }
+
+
+    public void kirimdataPulang(String valid, String status, String ketKehadiran, String jampegawai){
+
+        progressDialog = new ProgressDialog(IzinSakitFinalActivity.this, R.style.AppCompatAlertDialogStyle);
+        progressDialog.setMessage("Sedang memproses...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadizinsakitpulang(
                 fotoTaging,
                 ketKehadiran,
                 eJabatan,
@@ -717,7 +759,7 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
                 iconLampiran.setVisibility(View.GONE);
 
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
 
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath,0), true);
 
@@ -726,7 +768,7 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
 
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                rotationBitmapSurat.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -746,13 +788,13 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
                 String FilePath2  = getDriveFilePath(selectedImageUri, IzinSakitFinalActivity.this);
 
                 File file1 = new File(FilePath2);
-                Bitmap bitmap = ambilFotoLampiran.fileBitmap(file1);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file1);
                 rotationBitmapSurat = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(FilePath2,0), true);
 
                 ivSuratPerintahFinal.setImageBitmap(rotationBitmapSurat);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG,75, byteArrayOutputStream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
                 ekslampiran = "jpg";
@@ -784,9 +826,9 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
                 File filelampiran = new File(myDir, fotoFileLampiran);
                 Bitmap gambarLampiran = BitmapFactory.decodeFile(filelampiran.getAbsolutePath());
                 ivSuratPerintahFinal.setImageBitmap(gambarLampiran);
-                Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(filelampiran);
+                Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(filelampiran);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+                selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 lampiran =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 

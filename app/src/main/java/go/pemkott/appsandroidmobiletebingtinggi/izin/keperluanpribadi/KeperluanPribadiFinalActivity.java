@@ -312,9 +312,7 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
                 dialogView.viewNotifKosong(KeperluanPribadiFinalActivity.this, "Anda hanya dapat mengisi absen masuk, "+batasWaktu+" menit sebelum Jam Masuk", "");
             }else{
 
-                if (radioSelectedKehadiran.getText().toString().equals("Masuk")){
-
-
+                if (radioSelectedKehadiran.getText().toString().equals("MASUK")){
                     if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
                         showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
                     }else{
@@ -323,7 +321,6 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
                 }
                 else {
                     rbPosisi = "kp";
-
                     kirimdataPulang(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
                 }
             }
@@ -560,13 +557,13 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
 
                 ivFinalKegiatan.setVisibility(View.VISIBLE);
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFoto.fileBitmap(file);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
                 rotationBitmapTag = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath, 0), true);
 
                 ivFinalKegiatan.setImageBitmap(rotationBitmapTag);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapTag.compress(Bitmap.CompressFormat.JPEG,50, byteArrayOutputStream);
+                rotationBitmapTag.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
