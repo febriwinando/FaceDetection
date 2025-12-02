@@ -97,6 +97,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import go.pemkott.appsandroidmobiletebingtinggi.NewDashboard.DashboardVersiOne;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
@@ -106,6 +107,7 @@ import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.dinasluarkantor.perjalanandinas.PerjalananDinasFinalActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.kameralampiran.CameraLampiranActivity;
+import go.pemkott.appsandroidmobiletebingtinggi.kehadiran.AbsensiKehadiranActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFotoLampiran;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.Lokasi;
@@ -434,7 +436,7 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
 
 
     public void kirimdataMasuk(String valid, String status, String ketKehadiran, String jampegawai){
-
+        Log.d("Log Izin Sakit", "mulai");
         progressDialog = new ProgressDialog(IzinSakitFinalActivity.this, R.style.AppCompatAlertDialogStyle);
         progressDialog.setMessage("Sedang memproses...");
         progressDialog.setCancelable(false);
@@ -466,16 +468,26 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
                 progressDialog.dismiss();
-                if (!response.isSuccessful()){
-                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            IzinSakitFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
+                    Log.d("Log Izin Sakit", "error: tidak menerima response.");
+
                     return;
                 }
 
-                assert response.body() != null;
-                if(response.body().isStatus()){
-                    viewSukses(IzinSakitFinalActivity.this);
-                }else{
-                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, response.body().getRemarks(), "");
+                ResponsePOJO data = response.body();
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    Log.d("Log Izin Sakit", "berhasil.");
+                    dialogView.viewSukses(IzinSakitFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, data.getRemarks(),"");
                 }
 
             }
@@ -483,6 +495,8 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
             @Override
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
+                Log.d("Log Izin Sakit", "error: "+t.getMessage());
+
                 dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
             }
         });
@@ -490,6 +504,7 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
 
 
     public void kirimdataPulang(String valid, String status, String ketKehadiran, String jampegawai){
+        Log.d("Log Izin Sakit", "mulai");
 
         progressDialog = new ProgressDialog(IzinSakitFinalActivity.this, R.style.AppCompatAlertDialogStyle);
         progressDialog.setMessage("Sedang memproses...");
@@ -522,23 +537,36 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
                 progressDialog.dismiss();
-                if (!response.isSuccessful()){
-                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            IzinSakitFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
+                    Log.d("Log Izin Sakit", "error: tidak menerima response.");
+
                     return;
                 }
 
-                assert response.body() != null;
-                if(response.body().isStatus()){
-                    viewSukses(IzinSakitFinalActivity.this);
-                }else{
-                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, response.body().getRemarks(), "");
+                ResponsePOJO data = response.body();
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    Log.d("Log Izin Sakit", "berhasil.");
+                    dialogView.viewSukses(IzinSakitFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(IzinSakitFinalActivity.this, data.getRemarks(),"");
                 }
+
 
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
+                Log.d("Log Izin Sakit", "error: "+t.getMessage());
+
                 dialogView.viewNotifKosong(IzinSakitFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
             }
         });
@@ -732,13 +760,13 @@ public class IzinSakitFinalActivity extends AppCompatActivity implements OnMapRe
             if (requestCode == 1 && resultCode == RESULT_OK) {
 
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = ambilFoto.fileBitmap(file);
+                Bitmap bitmap = ambilFoto.compressBitmapTo80KB(file);
                 rotationBitmapTag = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), AmbilFoto.exifInterface(currentPhotoPath,0), true);
 
                 ivFinalKegiatan.setImageBitmap(rotationBitmapTag);
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotationBitmapTag.compress(Bitmap.CompressFormat.JPEG,50, byteArrayOutputStream);
+                rotationBitmapTag.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
                 byte[] imageInByte = byteArrayOutputStream.toByteArray();
                 fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 

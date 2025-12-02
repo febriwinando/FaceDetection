@@ -209,10 +209,10 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivTaging.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
         byte[] imageInByte = byteArrayOutputStream.toByteArray();
         encodedImage =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
         llUpload.setOnClickListener(view -> {
@@ -533,7 +533,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                     String rbValid = "2", ketKehadiran;
                     String eselon = "0";
 
-                    if (radioSelectedKehadiran.getText().toString().equals("Masuk")) {
+                    if (radioSelectedKehadiran.getText().toString().equals("MASUK")) {
                         ketKehadiran = "masuk";
                         rbPosisi = "masuk";
 
@@ -559,15 +559,11 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                             e.printStackTrace();
                         }
                         if (tanggal.equals(rbTanggal)) {
-                            if (jam_masuk == null) {
                                 if (tagingTime.getTime() < dateBatasWaktu.getTime()) {
                                     dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda hanya dapat mengisi absen masuk, " + batasWaktu + " menit sebelum Jam Masuk", "");
                                 } else {
                                     kirimdata(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
                                 }
-                            } else {
-                                dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda sudah mengisi absensi masuk.", "");
-                            }
 
                         } else {
                             if (tagingTime.getTime() > jamPulangDate.getTime()) {
@@ -600,26 +596,13 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                             String tanggalAbsenSiftMalam = SIMPLE_FORMAT_TANGGAL.format(newDate);
 
                             if (tanggal.equals(tanggalAbsenSiftMalam)) {
-                                if (tanggalAbsenSiftMalam.equals(tanggal)) {
-                                    if (tagingTime.getTime() > jamPulangDate.getTime()) {
-                                        if (jam_masuk == null) {
-                                            kirimdata("masukpulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
-                                        } else {
-                                            kirimdata("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
-                                        }
-                                    }else {
-
-                                        dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda.");
-
-                                    }
-                                }
-                            }
-                            else {
-                                if (jam_masuk == null){
-                                    dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat melakukan absensi pulang,", "silahkan lakukan absensi masuk terlebih dahulu.");
-                                }else{
+                                if (tagingTime.getTime() > jamPulangDate.getTime()) {
+                                    kirimdata("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
+                                } else {
                                     dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda.");
                                 }
+                            } else {
+                                    dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda.");
                             }
 
                         }
