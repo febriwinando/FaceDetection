@@ -81,6 +81,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import go.pemkott.appsandroidmobiletebingtinggi.NewDashboard.DashboardVersiOne;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
@@ -90,6 +91,7 @@ import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.dinasluarkantor.perjalanandinas.PerjalananDinasFinalActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.geolocation.GetLocation;
+import go.pemkott.appsandroidmobiletebingtinggi.kehadiran.AbsensiKehadiranActivity;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.Lokasi;
 import go.pemkott.appsandroidmobiletebingtinggi.utils.NetworkUtils;
@@ -131,8 +133,8 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
     String jam_masuk, jam_pulang, batasWaktu;
     SimpleDateFormat hari;
 
-    String fotoTaging = null, lampiran = null;
-    String ekslampiran;
+    String fotoTaging = null;
+
 
     TextView tvKegiatanFinal, titleDinasLuar, title_content;
     ArrayList<String> kegiatans = new ArrayList<>();
@@ -222,10 +224,10 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivFinalKegiatan.setImageBitmap(gambardeteksi);
-        Bitmap selectedBitmap = ambilFoto.fileBitmapCompress(file);
+        Bitmap selectedBitmap = ambilFoto.compressBitmapTo80KB(file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        selectedBitmap.compress(Bitmap.CompressFormat.PNG,75, byteArrayOutputStream);
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG,90, byteArrayOutputStream);
         byte[] imageInByte = byteArrayOutputStream.toByteArray();
         fotoTaging =  Base64.encodeToString(imageInByte,Base64.DEFAULT);
 
@@ -349,7 +351,7 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadTLMasuk(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadIzinKp(
                 fotoTaging,
                 ketKehadiran,
                 eJabatan,
@@ -366,8 +368,6 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
                 eOPD,
                 jampegawai,
                 valid,
-                lampiran,
-                ekslampiran,
                 rbFakeGPS,
                 batasWaktu
         );
@@ -375,18 +375,24 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
         call.enqueue(new Callback<ResponsePOJO>() {
             @Override
             public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
-                if (!response.isSuccessful()){
-                    dialogproses.dismiss();
-                    dialogView.viewNotifKosong(KeperluanPribadiFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                dialogproses.dismiss();
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            KeperluanPribadiFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
                     return;
                 }
-                if(response.body().isStatus()){
-                    dialogproses.dismiss();
-                    viewSukses(KeperluanPribadiFinalActivity.this);
 
-                }else{
-                    dialogproses.dismiss();
-                    dialogView.viewNotifKosong(KeperluanPribadiFinalActivity.this, response.body().getRemarks(), "");
+                ResponsePOJO data = response.body();
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(KeperluanPribadiFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(KeperluanPribadiFinalActivity.this, data.getRemarks(),"");
                 }
 
             }
@@ -394,7 +400,7 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
             @Override
             public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
                 dialogproses.dismiss();
-                dialogView.viewNotifKosong(KeperluanPribadiFinalActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                dialogView.pesanError(KeperluanPribadiFinalActivity.this);
             }
         });
 
@@ -564,45 +570,6 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
 
     }
 
-    public String getPDFPath(Uri uri){
-        String absolutePath = "";
-        try{
-            InputStream inputStream = KeperluanPribadiFinalActivity.this.getContentResolver().openInputStream(uri);
-            byte[] pdfInBytes = new byte[inputStream.available()];
-            inputStream.read(pdfInBytes);
-            int offset = 0;
-            int numRead = 0;
-            while (offset < pdfInBytes.length && (numRead = inputStream.read(pdfInBytes, offset, pdfInBytes.length - offset)) >= 0) {
-                offset += numRead;
-            }
-
-            String mPath = "";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-                mPath= KeperluanPribadiFinalActivity.this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)+"absensi-"+sEmployeID+"-"+currentDateandTimes + ".pdf";
-            }
-            else
-            {
-                mPath= Environment.getExternalStorageDirectory().toString() + "absensi-"+sEmployeID+"-"+currentDateandTimes + ".pdf";
-            }
-
-            File pdfFile = new File(mPath);
-            OutputStream op = new FileOutputStream(pdfFile);
-            op.write(pdfInBytes);
-
-            absolutePath = pdfFile.getPath();
-
-            InputStream finput = new FileInputStream(pdfFile);
-            byte[] imageBytes = new byte[(int)pdfFile.length()];
-            finput.read(imageBytes, 0, imageBytes.length);
-            finput.close();
-            ekslampiran = "pdf";
-            lampiran = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
-        }catch (Exception ae){
-            ae.printStackTrace();
-        }
-        return absolutePath;
-    }
 
     ByteArrayOutputStream byteArrayTag, byteArraySurat;
     public Uri getImageUri(Bitmap inImage, int i) {
@@ -629,21 +596,12 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
 
     public void checkLocationPermission() {
         int hasWriteStoragePermission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hasWriteStoragePermission = getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-            if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
-                return;
-            }
-        } else {
+        hasWriteStoragePermission = getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
         }
     }
 
-
-    public void backAbsenMasuk(View view){
-        stopLocationUpdates();
-        finish();
-    }
 
     private void setupViews() {
 
