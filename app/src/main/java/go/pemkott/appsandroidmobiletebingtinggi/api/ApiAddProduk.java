@@ -140,9 +140,33 @@ public interface ApiAddProduk {
 
 
     @FormUrlEncoded
-    @POST("izin/pribadi")
-    Call<ResponsePOJO> uploadIzinKp(
-            @Field("fototaging") String encodedImage,
+    @POST("izin/pribadi/masuk")
+    Call<ResponsePOJO> uploadIzinKpMasuk(
+            @Field("fototaging") String encfototagingodedImage,
+            @Field("absensi") String absensi,
+            @Field("eselon") String eselon,
+            @Field("employee_id") String employee_id,
+            @Field("timetable_id") String timetable_id,
+            @Field("tanggal") String tanggal,
+            @Field("jam_masuk") String jam_masuk,
+            @Field("posisi_masuk") String posisi_masuk,
+            @Field("status_masuk") String status_masuk,
+            @Field("lat_masuk") String lat_masuk,
+            @Field("lng_masuk") String lng_masuk,
+            @Field("ket_masuk") String ket_masuk,
+            @Field("terlambat") int terlambat,
+            @Field("opd") String opd,
+            @Field("jam_kantor") String jam_kantor,
+            @Field("valid_masuk") String valid_masuk,
+            @Field("fakegps") String fakegps,
+            @Field("batas_waktu") String bataswaktu
+    );
+
+
+    @FormUrlEncoded
+    @POST("izin/pribadi/pulang")
+    Call<ResponsePOJO> uploadIzinKpPulang(
+            @Field("fototaging") String fototaging,
             @Field("absensi") String absensi,
             @Field("eselon") String eselon,
             @Field("employee_id") String employee_id,
@@ -165,7 +189,7 @@ public interface ApiAddProduk {
     @FormUrlEncoded
     @POST("tl/pulang")
     Call<ResponsePOJO> uploadTLPulang(
-            @Field("fototaging") String encodedImage,
+            @Field("fototaging") String fototaging,
             @Field("absensi") String absensi,
             @Field("eselon") String eselon,
             @Field("employee_id") String id,

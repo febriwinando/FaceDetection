@@ -313,45 +313,94 @@ public class KeperluanPribadiFinalActivity extends AppCompatActivity implements 
             }else{
 
                 if (radioSelectedKehadiran.getText().toString().equals("Masuk")){
-                    if (jam_masuk == null){
 
-                        if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
-                            showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
-                        }else{
-                            kirimdata(rbValid, rbPosisi, rbStatus, "masuk", jamMasuk);
-                        }
 
+                    if (tagingTimePeriksa.getTime() >= pulangPeriksa.getTime()){
+                        showMessage("Peringatan", "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.");
                     }else{
-
-                        showMessage("Peringatan", "Anda sudah mengisi absensi masuk.");
-
+                        kirimdataMasuk(rbValid, rbPosisi, rbStatus, "masuk", jamMasuk);
                     }
                 }
                 else {
                     rbPosisi = "kp";
-                    if (jam_pulang == null){
-                        if(jam_masuk == null ){
-                            kirimdata(rbValid, rbPosisi, rbStatus, "masukpulang", jamPulang);
-                        }else{
-                            kirimdata(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
-                        }
 
-                    }else{
-                        showMessage("Peringatan", "Anda sudah mengisi absensi pulang.");
-                    }
+                    kirimdataPulang(rbValid, rbPosisi, rbStatus, "pulang", jamPulang);
                 }
             }
         }
     }
 
 
-    public void kirimdata(String valid, String posisi, String status, String ketKehadiran, String jampegawai){
+    public void kirimdataMasuk(String valid, String posisi, String status, String ketKehadiran, String jampegawai){
 
         Dialog dialogproses = new Dialog(KeperluanPribadiFinalActivity.this, R.style.DialogStyle);
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadIzinKp(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadIzinKpMasuk(
+                fotoTaging,
+                ketKehadiran,
+                eJabatan,
+                sEmployeID,
+                timetableid,
+                rbTanggal,
+                rbJam,
+                posisi,
+                status,
+                rbLat,
+                rbLng,
+                rbKet,
+                mins,
+                eOPD,
+                jampegawai,
+                valid,
+                rbFakeGPS,
+                batasWaktu
+        );
+
+        call.enqueue(new Callback<ResponsePOJO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+                dialogproses.dismiss();
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(
+                            KeperluanPribadiFinalActivity.this,
+                            "Gagal mengisi absensi",
+                            "Silahkan coba kembali."
+                    );
+                    return;
+                }
+
+                ResponsePOJO data = response.body();
+
+                if (Objects.requireNonNull(response.body()).isStatus()){
+                    dialogView.viewSukses(KeperluanPribadiFinalActivity.this, data.getRemarks());
+                }else {
+                    dialogView.viewNotifKosong(KeperluanPribadiFinalActivity.this, data.getRemarks(),"");
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                dialogproses.dismiss();
+                dialogView.pesanError(KeperluanPribadiFinalActivity.this);
+            }
+        });
+
+        dialogproses.show();
+
+    }
+
+    public void kirimdataPulang(String valid, String posisi, String status, String ketKehadiran, String jampegawai){
+
+        Dialog dialogproses = new Dialog(KeperluanPribadiFinalActivity.this, R.style.DialogStyle);
+        dialogproses.setContentView(R.layout.view_proses);
+        dialogproses.setCancelable(false);
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadIzinKpPulang(
                 fotoTaging,
                 ketKehadiran,
                 eJabatan,
