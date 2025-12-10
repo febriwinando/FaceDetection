@@ -148,8 +148,6 @@ public class AbsensiKehadiranActivity extends AppCompatActivity implements OnMap
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.biru));
 
         super.onCreate(savedInstanceState);
-
-//        setContentView(R.layout.activity_absensi_kehadiran);
         setContentView(R.layout.activity_kehadiran_one);
         databaseHelper = new DatabaseHelper(this);
         databases();

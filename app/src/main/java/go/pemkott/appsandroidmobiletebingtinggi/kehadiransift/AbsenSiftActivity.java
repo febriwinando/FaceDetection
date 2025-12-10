@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +41,6 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -73,8 +71,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
-import go.pemkott.appsandroidmobiletebingtinggi.NewDashboard.DashboardVersiOne;
 import go.pemkott.appsandroidmobiletebingtinggi.R;
 import go.pemkott.appsandroidmobiletebingtinggi.api.ResponsePOJO;
 import go.pemkott.appsandroidmobiletebingtinggi.api.RetroClient;
@@ -103,7 +101,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
 
     DialogView dialogView = new DialogView(AbsenSiftActivity.this);
-    File imageFile;
+
 
     private String currentPhotoPath;
     private String sEmployId;
@@ -121,7 +119,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
     String jamTaging, eKelompok, eJabatan, timetableid;
     String tanggal;
     String diff, latOffice, lngOffice,eOPD;
-    String jam_masuk, jam_pulang;
+
 
     Calendar cal = Calendar.getInstance();
 
@@ -165,7 +163,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
         databaseHelper = new DatabaseHelper(mContext);
         databases();
-//Google Maps
+        //Google Maps
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.putih));
@@ -177,9 +175,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
         setupViews();
         setupViewModel();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }
+        checkLocationPermission();
 
         ivTaging = findViewById(R.id.ivTagingAbsen);
         llUpload = findViewById(R.id.llUploadkehadiran);
@@ -193,9 +189,6 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         setRoundedBackground(fragmentContainerView);
 
-
-        jam_masuk = DashboardVersiOne.jam_masuk;
-        jam_pulang = DashboardVersiOne.jam_pulang;
         rbTanggal = JadwalSiftActivity.tanggalSift;
         inisialsift = JadwalSiftActivity.inisialsift;
         idsift = JadwalSiftActivity.idsift;
@@ -206,7 +199,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         String myDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()+ "/eabsensi";
         Intent intent = getIntent();
         String fileName = intent.getStringExtra("fileName");
-        file = new File(myDir, fileName);
+        file = new File(myDir, Objects.requireNonNull(fileName));
 
         Bitmap gambardeteksi = BitmapFactory.decodeFile(file.getAbsolutePath());
         ivTaging.setImageBitmap(gambardeteksi);
@@ -555,14 +548,14 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                                 if (tagingTime.getTime() < dateBatasWaktu.getTime()) {
                                     dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda hanya dapat mengisi absen masuk, " + batasWaktu + " menit sebelum Jam Masuk", "");
                                 } else {
-                                    kirimdata(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
+                                    kirimdataMasukMalam(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
                                 }
 
                         } else {
                             if (tagingTime.getTime() > jamPulangDate.getTime()) {
                                 dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda hanya dapat mengisi absen masuk, sebelum jam pulang malam.", "");
                             } else {
-                                kirimdata(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
+                                kirimdataMasukMalam(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
                             }
 
                         }
@@ -571,9 +564,6 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                     else {
                         rbPosisi = "pulang";
                         String tanggal = SIMPLE_FORMAT_TANGGAL.format(new Date());
-
-                        if (jam_pulang == null) {
-//                        String jamSekarangString = SIMPLE_FORMAT_JAM_TAGING.format(new Date());
 
                             Date hariini = null;
                             try {
@@ -592,7 +582,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
                             if (tanggal.equals(tanggalAbsenSiftMalam)) {
                                 if (tagingTime.getTime() > jamPulangDate.getTime()) {
-                                    kirimdata("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
+                                    kirimdataPulangMalam("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
                                 } else {
                                     dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda.");
                                 }
@@ -600,12 +590,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                                     dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda.");
                             }
 
-                        }
-                        else {
-                            if (tanggal.equals(rbTanggal)) {
-                                dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda.");
-                            }
-                        }
+
                     }
                 }//Malam
                 //Pagi
@@ -618,7 +603,6 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                         rbPosisi = "masuk";
                         ketKehadiran = "masuk";
 
-                        if (jam_masuk == null) {
                             if (tagingTime.getTime() < dateBatasWaktu.getTime()) {
                                 dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda hanya dapat mengisi absen masuk, " + batasWaktu + " menit sebelum Jam Masuk", "");
                             }
@@ -626,33 +610,19 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
                                 if (tagingTime.getTime() > jamPulangDate.getTime()) {
                                     dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda tidak dapat melakukan absensi masuk pada jam pulang kerja.", "");
                                 } else {
-                                    kirimdata(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
+                                    kirimdataMasukPagi(ketKehadiran, eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, mins, masuksift, rbValid);
                                 }
                             }
-                        }
-                        else {
-                            dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda sudah mengisi absensi masuk.", "");
-                        }
+
                     }
                     else {
-
                         rbPosisi = "pulang";
-
-                        if (jam_pulang == null) {
-
                             if (tagingTime.getTime() < jamPulangDate.getTime()) {
                                 dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda belum dapat mengisi absensi pulang,", "silahkan lanjutkan kembali aktivitas kantor anda ya.");
                             } else {
-                                if (jam_masuk == null) {
-                                    kirimdata("masukpulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
-                                } else {
-                                    kirimdata("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
-                                }
+                                    kirimdataPulangPagi("pulang", eselon, sEmployId, timetableid, rbTanggal, rbJam, rbPosisi, "hadir", rbLat, rbLng, rbKet, 0, pulangsift, rbValid);
                             }
 
-                        } else {
-                            dialogView.viewNotifKosong(AbsenSiftActivity.this, "Anda sudah mengisi absensi pulang.", "");
-                        }
                     }
 
 
@@ -868,7 +838,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
 
-    public void kirimdata(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status,  String lat, String lng, String ket, int terlambat, String jampegawai, String validasi ){
+    public void kirimdataMasukPagi(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status,  String lat, String lng, String ket, int terlambat, String jampegawai, String validasi ){
         Dialog dialogproses = new Dialog(AbsenSiftActivity.this, R.style.DialogStyle);
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
@@ -931,6 +901,197 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         dialogproses.show();
     }
 
+
+    public void kirimdataPulangPagi(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status,  String lat, String lng, String ket, int terlambat, String jampegawai, String validasi ){
+        Dialog dialogproses = new Dialog(AbsenSiftActivity.this, R.style.DialogStyle);
+        dialogproses.setContentView(R.layout.view_proses);
+        dialogproses.setCancelable(false);
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+                encodedImage,
+                absensi,
+                eselon,
+                idpegawai,
+                timetableid,
+                tanggal,
+                jam,
+                posisi,
+                status,
+                lat,
+                lng,
+                eOPD,
+                jampegawai,
+                validasi,
+                rbFakeGPS,
+                batasWaktu,
+                masuksift,
+                pulangsift,
+                inisialsift,
+                tipesift,
+                idsift,
+                ket,
+                terlambat
+        );
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(AbsenSiftActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                    dialogproses.dismiss();
+                    return;
+                }
+
+                if (response.body().isStatus()) {
+                    dialogproses.dismiss();
+                    viewSukses(AbsenSiftActivity.this);
+                } else {
+                    dialogproses.dismiss();
+
+                    dialogView.viewNotifKosong(AbsenSiftActivity.this, response.body().getRemarks(), "");
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                dialogproses.dismiss();
+                dialogView.pesanError(AbsenSiftActivity.this);
+            }
+        });
+
+        dialogproses.show();
+    }
+
+
+    public void kirimdataMasukMalam(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status,  String lat, String lng, String ket, int terlambat, String jampegawai, String validasi ){
+        Dialog dialogproses = new Dialog(AbsenSiftActivity.this, R.style.DialogStyle);
+        dialogproses.setContentView(R.layout.view_proses);
+        dialogproses.setCancelable(false);
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+                encodedImage,
+                absensi,
+                eselon,
+                idpegawai,
+                timetableid,
+                tanggal,
+                jam,
+                posisi,
+                status,
+                lat,
+                lng,
+                eOPD,
+                jampegawai,
+                validasi,
+                rbFakeGPS,
+                batasWaktu,
+                masuksift,
+                pulangsift,
+                inisialsift,
+                tipesift,
+                idsift,
+                ket,
+                terlambat
+        );
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(AbsenSiftActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                    dialogproses.dismiss();
+                    return;
+                }
+
+                if (response.body().isStatus()) {
+                    dialogproses.dismiss();
+                    viewSukses(AbsenSiftActivity.this);
+                } else {
+                    dialogproses.dismiss();
+
+                    dialogView.viewNotifKosong(AbsenSiftActivity.this, response.body().getRemarks(), "");
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                dialogproses.dismiss();
+                dialogView.pesanError(AbsenSiftActivity.this);
+            }
+        });
+
+        dialogproses.show();
+    }
+
+
+    public void kirimdataPulangMalam(String absensi, String eselon, String idpegawai, String timetableid, String tanggal, String jam, String posisi, String status,  String lat, String lng, String ket, int terlambat, String jampegawai, String validasi ){
+        Dialog dialogproses = new Dialog(AbsenSiftActivity.this, R.style.DialogStyle);
+        dialogproses.setContentView(R.layout.view_proses);
+        dialogproses.setCancelable(false);
+
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+                encodedImage,
+                absensi,
+                eselon,
+                idpegawai,
+                timetableid,
+                tanggal,
+                jam,
+                posisi,
+                status,
+                lat,
+                lng,
+                eOPD,
+                jampegawai,
+                validasi,
+                rbFakeGPS,
+                batasWaktu,
+                masuksift,
+                pulangsift,
+                inisialsift,
+                tipesift,
+                idsift,
+                ket,
+                terlambat
+        );
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponsePOJO> call, @NonNull Response<ResponsePOJO> response) {
+
+                if (!response.isSuccessful()) {
+
+                    dialogView.viewNotifKosong(AbsenSiftActivity.this, "Gagal mengisi absensi,", "silahkan coba kembali.");
+                    dialogproses.dismiss();
+                    return;
+                }
+
+                if (response.body().isStatus()) {
+                    dialogproses.dismiss();
+                    viewSukses(AbsenSiftActivity.this);
+                } else {
+                    dialogproses.dismiss();
+
+                    dialogView.viewNotifKosong(AbsenSiftActivity.this, response.body().getRemarks(), "");
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponsePOJO> call, @NonNull Throwable t) {
+                dialogproses.dismiss();
+                dialogView.pesanError(AbsenSiftActivity.this);
+            }
+        });
+
+        dialogproses.show();
+    }
 
 
     public void viewSukses(Context context){
