@@ -843,7 +843,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().absensiftMasukPagi(
                 encodedImage,
                 absensi,
                 eselon,
@@ -907,7 +907,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().absensiftPulangPagi(
                 encodedImage,
                 absensi,
                 eselon,
@@ -971,7 +971,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().absensiftPulangMalam(
                 encodedImage,
                 absensi,
                 eselon,
@@ -1035,7 +1035,7 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         dialogproses.setContentView(R.layout.view_proses);
         dialogproses.setCancelable(false);
 
-        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().uploadAbsenKehadiranSift(
+        Call<ResponsePOJO> call = RetroClient.getInstance().getApi().absensiftMasukMalam(
                 encodedImage,
                 absensi,
                 eselon,
