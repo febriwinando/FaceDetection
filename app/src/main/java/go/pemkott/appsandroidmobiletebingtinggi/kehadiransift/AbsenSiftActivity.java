@@ -82,6 +82,7 @@ import go.pemkott.appsandroidmobiletebingtinggi.database.DatabaseHelper;
 import go.pemkott.appsandroidmobiletebingtinggi.dialogview.DialogView;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.AmbilFoto;
 import go.pemkott.appsandroidmobiletebingtinggi.konstanta.Lokasi;
+import go.pemkott.appsandroidmobiletebingtinggi.konstanta.TimeFormat;
 import go.pemkott.appsandroidmobiletebingtinggi.utils.NetworkUtils;
 import go.pemkott.appsandroidmobiletebingtinggi.viewmodel.LocationViewModel;
 import retrofit2.Call;
@@ -244,8 +245,8 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
     }
-    private void setupViews() {
 
+    private void setupViews() {
         //Maps
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -256,16 +257,11 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
         locationViewModel = ViewModelProviders.of(this).get(LocationViewModel.class);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void checkLocationPermission() {
         int hasWriteStoragePermission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            hasWriteStoragePermission = getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-            if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
-                return;
-            }
-        } else {
+        hasWriteStoragePermission = getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
         }
     }
 
@@ -278,9 +274,6 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
         hari = new SimpleDateFormat("EEE", localeID);
         tanggal = hari.format(new Date());
-
-
-
 
         Cursor employe = databaseHelper.getDataEmployee(sEmployId);
 
@@ -584,12 +577,14 @@ public class AbsenSiftActivity extends AppCompatActivity implements OnMapReadyCa
 
                             Date hariini = null;
                             try {
-                                hariini = SIMPLE_FORMAT_TANGGAL.parse(rbTanggal);
+                                hariini = TimeFormat.SIMPLE_FORMAT_TANGGAL.parse(rbTanggal);
                             } catch (ParseException e) {
-                                e.printStackTrace();
+                                throw new RuntimeException(e);
                             }
 
+
                             Calendar calendar = Calendar.getInstance();
+                            assert hariini != null;
                             calendar.setTime(hariini);
                             calendar.add(Calendar.DAY_OF_YEAR, 1);
                             Date newDate = calendar.getTime();
